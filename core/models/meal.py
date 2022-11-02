@@ -1,11 +1,6 @@
 from django.db import models
 from .chef import Chef
-
-class Category(models.Model):
-    name = models.CharField(max_length=150)
-    icon = models.ImageField(upload_to='???', blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+from .category import Category
 
 class Meal(models.Model):
       
@@ -15,9 +10,9 @@ class Meal(models.Model):
     price = models.FloatField()
     image = models.ImageField(upload_to='images/')
     created_at=models.DateTimeField(auto_now_add=True,null=True)
-    views = models.IntegerField(default=0)
+    dishes_count = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category)
 
     def __str__(self):
         return self.title

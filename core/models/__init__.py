@@ -3,8 +3,10 @@ from .customer import User
 from .meal import Meal
 from .order import Order
 from .offer import Offer
-from .address import ChefAddress
+from .address import Address
 from .subscribtion import Subscribtion
+from .category import Category
+from .complaint import Complaint
 
 __all__ = [
     'Chef',
@@ -12,8 +14,10 @@ __all__ = [
     'Offer',
     'User',
     'Meal',
+    'Category',
     'Order',
     'OrderMeals',
-    'ChefAddress',
-    'Subscribtion'
+    'Address',
+    'Subscribtion',
+    'Complaint'
 ]

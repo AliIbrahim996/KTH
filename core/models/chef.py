@@ -1,36 +1,32 @@
 from django.db import models
-from django.contrib.auth.models import User
-from .address import ChefAddress
-
-class DocumentType(models.TextChoices):
-        ID = 'personal id'
-        WORK = 'work place'
+from .customer import User
 
 
-class Chef(models.Model): 
+class Chef(models.Model):
+    class ChefStates(models.TextChoices):
+        PENDING = "pending"
+        REJECTED = "rejected"
+        APPROVED = "approved"
+    
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    full_name=models.CharField(max_length=50,null=False, blank=False)
-    user_name=models.CharField(max_length=50,null=False, blank=False)
-    phone_number = models.CharField(max_length=25, null=False, blank=False)
-    email=models.EmailField(max_length=50, blank=False)
-    password = models.CharField(max_length=50,null=False, blank=False)
-    address = models.ForeignKey(ChefAddress, on_delete=models.CASCADE)
-    #location = PlainLocationField()
-    date_created=models.DateTimeField(auto_now=True)
-    status=models.BooleanField()
-    #id_card = models.ImageField(upload_to='images/')
-    #work_place = models.ImageField(upload_to='images/')
-    views = models.IntegerField(default=0)
+
+    #location on map
+    loc_lat = models.DecimalField(max_digits=9, decimal_places=6)
+    loc_lan = models.DecimalField(max_digits=9, decimal_places=6)
+    state = models.CharField(
+        max_length=25,
+        choices=ChefStates.choices,
+        null=False,
+        blank=False,
+        default=ChefStates.PENDING
+        )
+    id_card = models.ImageField(upload_to='images/')
+    heart_number = models.IntegerField(default = 0)
       
     def __str__(self):
         return self.full_name
-        
-    def save(self,*args,**kwargs):
-    	super().save(*args,**kwargs)
 
 
 class Documents(models.Model):
     chef = models.ForeignKey(Chef, on_delete=models.CASCADE)
     img = models.ImageField(upload_to='images/')
-    type = models.CharField(max_length=50, choices=DocumentType.choices, null=False, blank=False,
-                            default=DocumentType.ID)

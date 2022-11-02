@@ -1,7 +1,7 @@
 from django.contrib import admin
-from core.models import ChefAddress, Chef, User, Meal, Order, Documents, Subscribtion, Offer, complaint
+from core.models import Address, Chef, User, Meal, Order, Documents, Subscribtion, Offer, complaint
 
-admin.site.register(ChefAddress)
+admin.site.register(Address)
 admin.site.register(Chef)
 admin.site.register(User)
 admin.site.register(Meal)
