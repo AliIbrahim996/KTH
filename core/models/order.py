@@ -3,7 +3,6 @@ from django.db import models
 from core.models.customer import User
 from .chef import Chef
 
-
 class Order(models.Model):
 
     class OrderStates(models.TextChoices):
@@ -11,7 +10,6 @@ class Order(models.Model):
         SCHEDULED = "scheduled"
         Paid = "paid"
         DELIVERED = "delivered"
-
 
     chef = models.ForeignKey(Chef, on_delete=models.CASCADE)
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -28,5 +26,3 @@ class Order(models.Model):
 
     def __str__(self):
         return self.id
-
-

@@ -7,6 +7,7 @@ from .address import Address
 from .subscribtion import Subscribtion
 from .category import Category
 from .complaint import Complaint
+from .OrderedMeals import OrderedMeals
 
 __all__ = [
     'Chef',
@@ -16,7 +17,7 @@ __all__ = [
     'Meal',
     'Category',
     'Order',
-    'OrderMeals',
+    'OrderedMeals',
     'Address',
     'Subscribtion',
     'Complaint'
