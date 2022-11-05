@@ -1,17 +1,19 @@
 from .chef import Chef, Documents
-from .customer import Customer
+from .customer import User
 from .meal import Meal
 from .order import Order
 from .offer import Offer
 from .address import ChefAddress
+from .subscribtion import Subscribtion
 
 __all__ = [
     'Chef',
     'Documents',
     'Offer',
-    'Customer',
+    'User',
     'Meal',
     'Order',
     'OrderMeals',
-    'ChefAddress'
+    'ChefAddress',
+    'Subscribtion'
 ]
