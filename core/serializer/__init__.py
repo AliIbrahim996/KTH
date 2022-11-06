@@ -1,13 +1,14 @@
 from .chef_serializer import ChefSerializer
-from .customer_serializer import CustomerSerializer
+from .customer_serializer import RegistrationSerializer, PasswordChangeSerializer
 from .meal_serializer import MealSerializer
 from .order_serializer import OrderSerializer
 from .address_serializer import ChefAddressSerializer
 
 __all__ = [
-    'ChefSerializer',
-    'CustomerSerializer',
-    'MealSerializer',
-    'OrderSerializer',
-    'ChefAddressSerializer',
+    "ChefSerializer",
+    "RegistrationSerializer",
+    "PasswordChangeSerializer",
+    "MealSerializer",
+    "OrderSerializer",
+    "ChefAddressSerializer",
 ]

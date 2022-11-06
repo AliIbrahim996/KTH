@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from core.models import ChefAddress
+from core.models import Address
+
 
 class ChefAddressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ChefAddress
-        fields = '__all__'
+        model = Address
+        fields = "__all__"
