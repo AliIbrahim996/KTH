@@ -28,5 +28,5 @@ class Chef(models.Model):
 
 
 class Documents(models.Model):
-    chef = models.ForeignKey(Chef, on_delete=models.CASCADE)
+    chef = models.ForeignKey(Chef, on_delete=models.CASCADE, related_name='documents_set')
     img = models.ImageField(upload_to='images/')
