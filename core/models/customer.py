@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserManager(BaseUserManager):
@@ -35,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     full_name = models.CharField(max_length=50, null=False, blank=False)
     user_name = models.CharField(max_length=50, null=False, blank=False)
-    phone_number = models.CharField(max_length=25, null=False, blank=False, unique=True)
+    phone_number = PhoneNumberField(max_length=25, null=False, blank=False, unique=True)
     email = models.EmailField(max_length=50, blank=False)
     password = models.CharField(max_length=50, null=False, blank=False)
     date_created = models.DateTimeField(auto_now=True)

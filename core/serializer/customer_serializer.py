@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
 from django.contrib.auth.password_validation import validate_password
+from phonenumber_field.serializerfields import PhoneNumberField
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,14 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
 # Register User
 class RegistrationSerializer(serializers.ModelSerializer):
 
-    phone_number = serializers.CharField(
+    phone_number = PhoneNumberField(
         required=True,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r"^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$",
-                message="Not a valid Phone number.",
-            ),
         ],
     )
     password = serializers.CharField(
