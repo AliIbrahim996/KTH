@@ -1,12 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.serializer import RegistrationSerializer, PasswordChangeSerializer
+from django.core import serializers
+
+from core.serializer import (
+    PasswordChangeSerializer,
+    ChefRegistrationSerializer,
+    RegistrationSerializer,
+    DocumentsSerializer,
+)
 from rest_framework import permissions
 from core.models import User
 
@@ -15,11 +19,25 @@ class RegistrationView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        serializer = RegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user_serializer = RegistrationSerializer(data=request.data)
+        if user_serializer.is_valid():
+            user_obj = user_serializer.create(request.data)
+            if request.data["is_chef"] == "True":
+                chef_serializer = ChefRegistrationSerializer(
+                    user=user_obj, data=request.data
+                )
+                if chef_serializer.is_valid():
+                    chef_serializer.save()
+                    return Response(
+                        "New chef is created", status=status.HTTP_201_CREATED
+                    )
+                return Response(
+                    chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                )
+            user_obj.save()
+            user_serializer.save()
+            return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
@@ -30,8 +48,7 @@ class LoginView(APIView):
             return Response(
                 {"msg": "Credentials missing"}, status=status.HTTP_400_BAD_REQUEST
             )
-        #  phone_number = request.Post.get("phone_number")
-        #  password = request.Post.get("password")
+
         phone_number = request.data["phone_number"]
         password = request.data["password"]
         try:
@@ -41,7 +58,6 @@ class LoginView(APIView):
                 {"msg": "Unregistered account"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # user = authenticate(request, username=phone_number, password=password)
         # if user is not None:
         if user.check_password(password):
             login(request, user)
