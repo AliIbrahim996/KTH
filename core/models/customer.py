@@ -48,6 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    is_active = False
+
     USERNAME_FIELD = "phone_number"
 
     def __str__(self):

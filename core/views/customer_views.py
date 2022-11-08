@@ -29,14 +29,14 @@ class RegistrationView(APIView):
                 if chef_serializer.is_valid():
                     chef_serializer.save()
                     return Response(
-                        "New chef is created", status=status.HTTP_201_CREATED
+                        {"msg": "New chef is created!"}, status=status.HTTP_201_CREATED
                     )
                 return Response(
                     chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST
                 )
             user_obj.save()
             user_serializer.save()
-            return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"msg": "New customer is created!"}, status=status.HTTP_201_CREATED)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -59,12 +59,15 @@ class LoginView(APIView):
             )
 
         # if user is not None:
-        if user.check_password(password):
-            login(request, user)
+        if user.is_active:
+            if not user.is_authenticated:
+                if user.check_password(password):
+                    login(request, user)
+                    return Response({"msg": "Login Success"}, status=status.HTTP_200_OK)
+                return Response(
+                    {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
             return Response({"msg": "Login Success"}, status=status.HTTP_200_OK)
-        return Response(
-            {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
-        )
+        return Response({"msg": "User is unauthorized, OTP required!"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):
@@ -86,3 +89,14 @@ class ChangePasswordView(APIView):
         request.user.set_password(serializer.validated_data["new_password"])
         request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class VerifyOTPView(APIView):
+
+    def pos(self, request):
+        if request.data["is_verified"]:
+            user = User.objects.get(phone_number=request.data["phone_number"])
+            user.is_active = True
+            user.save()
+            return Response({"msg": "User is verified"}, status=status.HTTP_200_OK)
+        return Response({"msg": "missing or invalid is_verified value"}, status=status.HTTP_400_BAD_REQUEST)
