@@ -7,10 +7,10 @@ class Chef(models.Model):
         PENDING = "pending"
         REJECTED = "rejected"
         APPROVED = "approved"
-    
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
 
-    #location on map
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # location on map
     loc_lat = models.DecimalField(max_digits=9, decimal_places=6)
     loc_lan = models.DecimalField(max_digits=9, decimal_places=6)
     state = models.CharField(
@@ -18,15 +18,17 @@ class Chef(models.Model):
         choices=ChefStates.choices,
         null=False,
         blank=False,
-        default=ChefStates.PENDING
-        )
-    id_card = models.ImageField(upload_to='images/')
-    heart_number = models.IntegerField(default = 0)
-      
+        default=ChefStates.PENDING,
+    )
+    id_card = models.ImageField(upload_to="images/")
+    heart_number = models.IntegerField(default=0)
+
     def __str__(self):
-        return self.full_name
+        return str(self.user.full_name)
 
 
 class Documents(models.Model):
-    chef = models.ForeignKey(Chef, on_delete=models.CASCADE, related_name='documents_set')
-    img = models.ImageField(upload_to='images/')
+    chef = models.ForeignKey(
+        Chef, on_delete=models.CASCADE, related_name="documents_set"
+    )
+    img = models.ImageField(upload_to="images/")
