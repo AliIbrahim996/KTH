@@ -1,15 +1,14 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.core import serializers
+from core.models import Documents
 
 from core.serializer import (
     PasswordChangeSerializer,
     ChefRegistrationSerializer,
     RegistrationSerializer,
-    DocumentsSerializer,
 )
 from rest_framework import permissions
 from core.models import User
@@ -23,20 +22,27 @@ class RegistrationView(APIView):
         if user_serializer.is_valid():
             user_obj = user_serializer.create(request.data)
             if request.data["is_chef"] == "True":
+                # chef_obj = ChefRegistrationSerializer.create(ChefRegistrationSerializer(user=user_obj, data=request.data), validated_data=request.data)
                 chef_serializer = ChefRegistrationSerializer(
                     user=user_obj, data=request.data
                 )
                 if chef_serializer.is_valid():
                     chef_serializer.save()
+                    documents_set = request.data.pop("documents_set")
+                    chef_obj = chef_serializer.instance
+                    for doc in documents_set:
+                        doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
+                        # if doc_obj.is_valid():
+                        #     doc_obj.save()
                     return Response(
                         {"msg": "New chef is created!"}, status=status.HTTP_201_CREATED
                     )
-                return Response(
-                    chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(chef_obj.errors, status=status.HTTP_400_BAD_REQUEST)
             user_obj.save()
             user_serializer.save()
-            return Response({"msg": "New customer is created!"}, status=status.HTTP_201_CREATED)
+            return Response(
+                {"msg": "New customer is created!"}, status=status.HTTP_201_CREATED
+            )
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -65,9 +71,13 @@ class LoginView(APIView):
                     login(request, user)
                     return Response({"msg": "Login Success"}, status=status.HTTP_200_OK)
                 return Response(
-                    {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+                    {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
+                )
             return Response({"msg": "Login Success"}, status=status.HTTP_200_OK)
-        return Response({"msg": "User is unauthorized, OTP required!"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {"msg": "User is unauthorized, OTP required!"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
 
 class LogoutView(APIView):
@@ -92,11 +102,13 @@ class ChangePasswordView(APIView):
 
 
 class VerifyOTPView(APIView):
-
     def pos(self, request):
         if request.data["is_verified"]:
             user = User.objects.get(phone_number=request.data["phone_number"])
             user.is_active = True
             user.save()
             return Response({"msg": "User is verified"}, status=status.HTTP_200_OK)
-        return Response({"msg": "missing or invalid is_verified value"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"msg": "missing or invalid is_verified value"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
