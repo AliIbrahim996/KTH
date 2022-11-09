@@ -46,7 +46,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             phone_number=validated_data["phone_number"],
             email=validated_data["email"],
             full_name=validated_data["full_name"],
-            password=validated_data["password"]
+            password=validated_data["password"],
         )
         return user
 

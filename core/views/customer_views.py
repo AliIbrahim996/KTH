@@ -22,7 +22,6 @@ class RegistrationView(APIView):
         if user_serializer.is_valid():
             user_obj = user_serializer.create(request.data)
             if request.data["is_chef"] == "True":
-                # chef_obj = ChefRegistrationSerializer.create(ChefRegistrationSerializer(user=user_obj, data=request.data), validated_data=request.data)
                 chef_serializer = ChefRegistrationSerializer(
                     user=user_obj, data=request.data
                 )
@@ -32,8 +31,6 @@ class RegistrationView(APIView):
                     chef_obj = chef_serializer.instance
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
-                        # if doc_obj.is_valid():
-                        #     doc_obj.save()
                     return Response(
                         {"msg": "New chef is created!"}, status=status.HTTP_201_CREATED
                     )
@@ -102,7 +99,7 @@ class ChangePasswordView(APIView):
 
 
 class VerifyOTPView(APIView):
-    def pos(self, request):
+    def post(self, request):
         if request.data["is_verified"]:
             user = User.objects.get(phone_number=request.data["phone_number"])
             user.is_active = True
