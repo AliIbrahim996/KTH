@@ -33,3 +33,22 @@ class ChefRegistrationSerializer(serializers.ModelSerializer):
         )
 
         return chef
+
+
+class ChefListSerilizer(serializers.ModelSerializer):
+
+    full_name = serializers.CharField(source='user.full_name')
+    user_name = serializers.CharField(source='user.user_name')
+    phone_number = serializers.CharField(source='user.phone_number')
+    email = serializers.CharField(source='user.email')
+    profile_img = serializers.CharField(source='user.profile_img')
+    class Meta:
+        model = Chef
+        fields = [
+            "full_name",
+            "user_name",
+            "phone_number",
+            "email",
+            "profile_img",
+            "heart_number",
+        ]
