@@ -45,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=50, null=False, blank=False)
     date_created = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
-    profile_img = models.ImageField(upload_to="images/profile/")
+    profile_img = models.ImageField(upload_to="images/profile/", null=True)
 
     objects = UserManager()
 

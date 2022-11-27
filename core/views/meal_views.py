@@ -3,16 +3,19 @@ from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
-from core.models import Meal
+from rest_framework import permissions
+from core.models import Meal, Category
 from core.serializer import ListMealSerializer, ChefMealSerializer
 
 
 class MealsByChefView(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.AllowAny,)
     serializer_class = ListMealSerializer
+    queryset = Meal.objects.all()
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        chef= self.request.query_params.get('chef', None)
+        chef = self.request.query_params.get('chef', None)
         if chef:
             queryset = queryset.filter(chef=chef)
         else:
@@ -21,12 +24,15 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class MealsByCatecoryView(viewsets.ReadOnlyModelViewSet):
+class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.AllowAny,)
     serializer_class = ListMealSerializer
+    queryset = Meal.objects.all()
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        category= self.request.query_params.get('category', None)
+        category_id = self.kwargs['cat_id']
+        category = Category.objects.all().filter(pk=category_id)
         if category:
             queryset = queryset.filter(category=category)
         else:
@@ -36,7 +42,7 @@ class MealsByCatecoryView(viewsets.ReadOnlyModelViewSet):
 
 
 class MealsViewSet(viewsets.ReadOnlyModelViewSet):
-
+    permission_classes = (permissions.AllowAny,)
     queryset = Meal.objects.all()
     serializer_class = ListMealSerializer
 
@@ -52,12 +58,12 @@ class MealView(APIView):
                 if meal_serializer.is_valid():
                     meal_serializer.save()
                     return Response(
-                            {"msg": "New Meal is created!"}, status=status.HTTP_201_CREATED
-                        )
+                        {"msg": "New Meal is created!"}, status=status.HTTP_201_CREATED
+                    )
                 return Response(meal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-                            {"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST
-                        )
+            {"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get(self, request, pk=None):
 
@@ -74,7 +80,7 @@ class MealView(APIView):
                 return Response(meal_serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({"msg": "You don't have any meals"}, status=status.HTTP_204_NO_CONTENT)
-        
+
         return Response({"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):

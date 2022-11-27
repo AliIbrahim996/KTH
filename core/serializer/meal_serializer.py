@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from core.models import Meal, Chef
 
+
 class ChefMealSerializer(serializers.ModelSerializer):
     chef = Chef()
 
@@ -49,6 +50,7 @@ class ListMealSerializer(serializers.ModelSerializer):
 
     chef = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
+
     class Meta:
         model = Meal
         fields = [
