@@ -16,6 +16,7 @@ class UserManager(BaseUserManager):
             raise ValueError("The given phone number must be set")
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
+        user.save()
         return user
 
     def create_user(self, phone_number, password=None, **extra_fields):
@@ -49,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    is_active = False
+    # is_active = False
 
     USERNAME_FIELD = "phone_number"
 

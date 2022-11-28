@@ -54,6 +54,7 @@ class ListMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = [
+            "id",
             "chef",
             "title",
             "description",

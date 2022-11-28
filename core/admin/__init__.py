@@ -9,6 +9,7 @@ from core.models import (
     Subscribtion,
     Offer,
     Complaint,
+    Category,
 )
 
 admin.site.register(Address)
@@ -20,3 +21,4 @@ admin.site.register(Documents)
 admin.site.register(Subscribtion)
 admin.site.register(Offer)
 admin.site.register(Complaint)
+admin.site.register(Category)

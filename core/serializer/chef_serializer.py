@@ -47,10 +47,13 @@ class ChefListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chef
         fields = [
+            "id",
             "full_name",
             "user_name",
             "phone_number",
             "email",
+            "loc_lat",
+            "loc_lan",
             "profile_img",
             "heart_number",
         ]

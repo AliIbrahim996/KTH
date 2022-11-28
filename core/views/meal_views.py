@@ -4,20 +4,19 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import permissions
-from core.models import Meal, Category
+from core.models import Meal, Category, Chef
 from core.serializer import ListMealSerializer, ChefMealSerializer
 
 
 class MealsByChefView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ListMealSerializer
-    queryset = Meal.objects.all()
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        chef = self.request.query_params.get('chef', None)
+        chef_id = self.kwargs['chef_id']
+        chef = Chef.objects.filter(id=chef_id)
         if chef:
-            queryset = queryset.filter(chef=chef)
+            queryset = Meal.objects.filter(chef=chef_id)
         else:
             queryset = Meal.objects.none()
 
@@ -27,14 +26,12 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
 class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ListMealSerializer
-    queryset = Meal.objects.all()
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         category_id = self.kwargs['cat_id']
-        category = Category.objects.all().filter(pk=category_id)
+        category = Category.objects.filter(id=category_id)
         if category:
-            queryset = queryset.filter(category=category)
+            queryset = Meal.objects.filter(category=category_id)
         else:
             queryset = Meal.objects.none()
 
