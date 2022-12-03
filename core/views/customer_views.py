@@ -34,7 +34,7 @@ class RegistrationView(APIView):
                     return Response(
                         {"msg": "New chef is created!"}, status=status.HTTP_201_CREATED
                     )
-                return Response(chef_obj.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             user_obj.save()
             user_serializer.save()
             return Response(

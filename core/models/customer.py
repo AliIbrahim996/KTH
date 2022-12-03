@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(phone_number, password, **extra_fields)
+        return self._create_user(phone_number, password, **extra_fields).save()
 
     def create(self, phone_number, password, **extra_fields):
         return self.create_user(phone_number, password, **extra_fields)
@@ -45,10 +45,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=50, null=False, blank=False)
     date_created = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
+    profile_img = models.ImageField(upload_to="images/profile/", null=True)
 
     objects = UserManager()
 
-    is_active = False
+    # is_active = False
 
     USERNAME_FIELD = "phone_number"
 
