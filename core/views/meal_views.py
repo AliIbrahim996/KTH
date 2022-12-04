@@ -14,6 +14,7 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         chef_id = self.kwargs['chef_id']
+        chef_id = self.kwargs['chef_id']
         chef = Chef.objects.filter(id=chef_id)
         if chef:
             queryset = Meal.objects.filter(chef=chef_id)
