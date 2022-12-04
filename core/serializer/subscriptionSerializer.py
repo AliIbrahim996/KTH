@@ -10,3 +10,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             "chef",
             "customer",
         }
+
+    def create(self, validated_data):
+        return Subscription.objects.create(chef=validated_data["chef"], customer=validated_data["customer"])
