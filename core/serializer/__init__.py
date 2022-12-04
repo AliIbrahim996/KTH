@@ -2,6 +2,7 @@ from .RegSerializer import RegistrationSerializer, PasswordChangeSerializer
 from .chef_serializer import ChefRegistrationSerializer, ChefListSerializer
 from .meal_serializer import ChefMealSerializer, ListMealSerializer
 from .category_serializer import CategorySerializer, ChefCategorySerializer
+from .subscriptionSerializer import SubscriptionSerializer
 
 __all__ = [
     "RegistrationSerializer",
@@ -12,4 +13,5 @@ __all__ = [
     "ListMealSerializer",
     "CategorySerializer",
     "ChefCategorySerializer",
+    "SubscriptionSerializer",
 ]
