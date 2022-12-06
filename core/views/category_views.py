@@ -19,14 +19,8 @@ class ChefCategoryView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         chef_id = self.kwargs['chef_id']
-        categories_id = set()
         chef = get_object_or_404(Chef, pk=chef_id)
-
-        meals = Meal.objects.filter(chef=chef)
-
-        for meal in meals:
-            categories_id.add(meal.category.id)
-
+        categories_id = Meal.objects.filter(chef=chef).values("category")
         queryset = Category.objects.filter(id__in=categories_id)
 
         return queryset.prefetch_related(

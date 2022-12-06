@@ -47,10 +47,8 @@ class MealsViewSet(viewsets.ReadOnlyModelViewSet):
 class ChefMealsByCategoryView(MealsByCategoryView):
     def get_queryset(self):
         category_id = self.kwargs['cat_id']
-        category = Category.objects.filter(id=category_id)
         chef_id = self.kwargs['chef_id']
-        chef = Chef.objects.filter(id=chef_id)
-        if chef and category:
+        if Category.objects.filter(id=category_id).exists() and Chef.objects.filter(id=chef_id).exists():
             queryset = Meal.objects.filter(category=category_id, chef=chef_id)
         else:
             queryset = Meal.objects.none()
