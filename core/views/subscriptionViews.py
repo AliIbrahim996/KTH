@@ -12,7 +12,7 @@ class CustomerSubscriptionView(APIView):
     serializer_class = ChefListSerializer
 
     def get(self, request):
-        customer_id = self.kwargs['customer_id']
+        customer_id = request.user.id
         # Get all subscribed chefs
         subscribed_chefs = Subscription.objects.filter(customer=customer_id).values('chef')
         chefs = Chef.objects.filter(id__in=subscribed_chefs)
