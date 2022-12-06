@@ -3,8 +3,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.models import Documents
-
+from core.models import Documents, VerificationCode
 from core.serializer import (
     PasswordChangeSerializer,
     ChefRegistrationSerializer,
@@ -12,6 +11,28 @@ from core.serializer import (
 )
 from rest_framework import permissions
 from core.models import User
+
+# Required includes for TFA
+from twilio.rest import Client
+import random
+
+from kitchenhome.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID
+
+
+def send_verification_code(phone_number):
+    account_sid = TWILIO_ACCOUNT_SID
+    auth_token = TWILIO_AUTH_TOKEN
+    client = Client(account_sid, auth_token)
+    # Generate random code
+    code = random.randint(1000, 9999)
+    message = client.messages.create(
+        messaging_service_sid=TWILIO_MESSAGING_SERVICE_SID,
+        body='Your verification code is {}'.format(code),
+        to=phone_number
+    )
+    if message.error_code == 'None':
+        return code
+    return message.error_code
 
 
 class RegistrationView(APIView):
@@ -31,14 +52,18 @@ class RegistrationView(APIView):
                     chef_obj = chef_serializer.instance
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
+                    code = send_verification_code(user_obj.phone_number)
+                    verification_code = VerificationCode.objects.create(code=code, user=user_obj)
                     return Response(
-                        {"msg": "New chef is created!"}, status=status.HTTP_201_CREATED
+                        {"msg": "New chef is created! Verification code has been sent!"}, status=status.HTTP_201_CREATED
                     )
                 return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             user_obj.save()
             user_serializer.save()
+            code = send_verification_code(user_obj.phone_number)
+            verification_code = VerificationCode.objects.create(code=code, user=user_obj)
             return Response(
-                {"msg": "New customer is created!"}, status=status.HTTP_201_CREATED
+                {"msg": "New customer is created! Verification code has been sent!"}, status=status.HTTP_201_CREATED
             )
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,7 +108,17 @@ class LogoutView(APIView):
         return Response({"msg": "Successfully Logged out"}, status=status.HTTP_200_OK)
 
 
-class ChangePasswordView(APIView):
+class ResetPasswordView(APIView):
+    def post(self, request):
+        if request.data["phone_number"] and request.data["new_password"]:
+            user = User.objects.filter(phone_number=request.data["phone_number"])
+            user.set_password(request.data["new_password"])
+            user.save()
+            return Response({"msg": "Password rested successfully"}, status=status.HTTP_200_OK)
+        return Response({"msg": "Missing phone_number or new_password fields!"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(ResetPasswordView):
     permission_classes = [
         IsAuthenticated,
     ]
@@ -95,17 +130,35 @@ class ChangePasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         request.user.set_password(serializer.validated_data["new_password"])
         request.user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK)
 
 
-class VerifyOTPView(APIView):
+class VerifyCodeView(APIView):
+
     def post(self, request):
-        if request.data["is_verified"]:
+        if request.data["phone_number"] and request.data["verification_code"]:
             user = User.objects.get(phone_number=request.data["phone_number"])
             user.is_active = True
             user.save()
             return Response({"msg": "User is verified"}, status=status.HTTP_200_OK)
         return Response(
-            {"msg": "missing or invalid is_verified value"},
+            {"msg": "missing/invalid phone number or code"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class SendCodeView(APIView):
+
+    def post(self, request):
+        if request.data["phone_number"]:
+            if User.objects.get(phone_number=request.data["phone_number"]).exists():
+                code = send_verification_code(request.data["phone_number"])
+                verification_code = VerificationCode.objects.create(code=code, user=User.objects.get(
+                    phone_number=request.data["phone_number"]))
+                msg = "VerificationCode is sent! code {}".format(verification_code)
+                return Response({"msg": msg}, status=status.HTTP_200_OK)
+            return Response({"msg": "The user dose not exists!"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"msg": "missing or invalid phone number!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
