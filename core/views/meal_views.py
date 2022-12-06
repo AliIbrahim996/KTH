@@ -44,6 +44,18 @@ class MealsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ListMealSerializer
 
 
+class ChefMealsByCategoryView(MealsByCategoryView):
+    def get_queryset(self):
+        category_id = self.kwargs['cat_id']
+        chef_id = self.kwargs['chef_id']
+        if Category.objects.filter(id=category_id).exists() and Chef.objects.filter(id=chef_id).exists():
+            queryset = Meal.objects.filter(category=category_id, chef=chef_id)
+        else:
+            queryset = Meal.objects.none()
+
+        return queryset
+
+
 class MealView(APIView):
 
     def post(self, request):
