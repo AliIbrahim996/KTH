@@ -3,6 +3,7 @@ from .meal_views import MealsByCategoryView, ChefMealsByCategoryView, MealsByChe
 from .category_views import CategoryView, ChefCategoryView
 from .chef_views import ChefView, BestChefsView
 from .subscriptionViews import CustomerSubscriptionView, CustomerSubscribeChefView
+from .searchViews import SearchView
 
 __all__ = [
     "RegistrationView",
@@ -20,4 +21,5 @@ __all__ = [
     "BestChefsView",
     "CustomerSubscriptionView",
     "CustomerSubscribeChefView",
+    "SearchView"
 ]

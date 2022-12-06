@@ -3,9 +3,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.schemas import get_schema_view
 from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView,\
-    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView
-from .views.swagger_ui import SwaggerUITemplateView
+    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView
 
+from .views.swagger_ui import SwaggerUITemplateView
 
 app_name = "core"
 
@@ -28,6 +28,7 @@ urlpatterns = [
     path("meal/chef/<int:chef_id>/<int:pk>/", MealsByChefView.as_view({'get': 'retrieve'}), name="Meals by chef"),
     path("customer/subscription", CustomerSubscriptionView.as_view(), name="Customer subscriptions"),
     path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
+    path("search", SearchView.as_view(), name="Search"),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.
