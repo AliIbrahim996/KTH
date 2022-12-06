@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
-    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView
+    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, \
+    ResetPasswordView, SendCodeView, VerifyCodeView
 
 
 app_name = "core"
@@ -9,7 +10,10 @@ urlpatterns = [
     path("user/signup", RegistrationView.as_view(), name="register"),
     path("user/login", LoginView.as_view(), name="register"),
     path("user/logout", LogoutView.as_view(), name="register"),
-    path("user/resetPassword", ChangePasswordView.as_view(), name="register"),
+    path("user/changePassword", ChangePasswordView.as_view(), name="register"),
+    path("user/resetPassword", ResetPasswordView.as_view(), name="register"),
+    path("user/sendCode", SendCodeView.as_view(), name="register"),
+    path("user/verifyCode", VerifyCodeView.as_view(), name="register"),
     path("chef/", ChefView.as_view(), name="chefs"),
     path("chef/<int:chef_id>/", ChefView.as_view(), name="chefs"),
     path("chef/best", BestChefsView.as_view(), name="best chefs"),
