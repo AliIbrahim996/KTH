@@ -26,7 +26,7 @@ urlpatterns = [
     path("meal/<int:pk>/", MealsViewSet.as_view({'get': 'retrieve'}), name="meals"),
     path("meal/chef/<int:chef_id>/", MealsByChefView.as_view({'get': 'list'}), name="Meals by chef"),
     path("meal/chef/<int:chef_id>/<int:pk>/", MealsByChefView.as_view({'get': 'retrieve'}), name="Meals by chef"),
-    path("customer/<int:customer_id>/Subscription", CustomerSubscriptionView.as_view(), name="Customer subscriptions"),
+    path("customer/subscription", CustomerSubscriptionView.as_view(), name="Customer subscriptions"),
     path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
