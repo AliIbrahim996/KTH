@@ -1,7 +1,10 @@
 from django.urls import path
+from rest_framework.permissions import AllowAny
+from rest_framework.schemas import get_schema_view
 from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView,\
     ChefCategoryView
+from .views.swagger_ui import SwaggerUITemplateView
 
 
 app_name = "core"
@@ -24,4 +27,21 @@ urlpatterns = [
     path("meal/chef/<int:chef_id>/", MealsByChefView.as_view({'get': 'list'}), name="Meals by chef"),
     path("meal/chef/<int:chef_id>/<int:pk>/", MealsByChefView.as_view({'get': 'retrieve'}), name="Meals by chef"),
 
+    # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
+    #   * `title` and `description` parameters are passed to `SchemaGenerator`.
+    #   * Provide view name for use with `reverse()`.
+    path('openapi', get_schema_view(
+        title="Kitchen Home",
+        description="API for end-points of Kitchen Home App",
+        version="1.0.0",
+        url='/core',
+        urlconf='core.urls',
+        permission_classes=[AllowAny],
+    ), name='openapi-schema'),
+    # Route TemplateView to serve Swagger UI templates.
+    #   * Provide `extra_context` with view name of `SchemaView`.
+    path('swagger-ui/', SwaggerUITemplateView.as_view(
+        template_name='core/swagger-ui.html',
+        extra_context={'schema_url': 'core:openapi-schema'}
+    ), name='swagger-ui'),
 ]
