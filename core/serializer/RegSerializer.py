@@ -4,9 +4,9 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
 
+
 # Register User
 class RegistrationSerializer(serializers.ModelSerializer):
-
     phone_number = PhoneNumberField(
         required=True,
         validators=[
@@ -22,11 +22,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "full_name",
-            "user_name",
+            "username",
             "password",
             "password2",
             "phone_number",
             "email",
+            "profile_img",
         ]
         extra_kwargs = {
             "full_name": {"required": True},
@@ -42,11 +43,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create(
-            user_name=validated_data["user_name"],
+            username=validated_data["username"],
             phone_number=validated_data["phone_number"],
             email=validated_data["email"],
             full_name=validated_data["full_name"],
             password=validated_data["password"],
+            profile_img=validated_data["profile_img"],
         )
         return user
 

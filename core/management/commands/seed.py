@@ -47,7 +47,7 @@ def create_user():
         user = User(
             id=id_[i],
             full_name=full_name_[i],
-            user_name=user_name_[i],
+            username=user_name_[i],
             phone_number=phone_number_[i],
             email=email_[i],
             password=password_[i],
