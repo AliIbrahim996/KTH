@@ -8,7 +8,7 @@ from core.models import (
     Meal,
     Order,
     Documents,
-    Subscribtion,
+    Subscription,
     Offer,
     Complaint,
     Category,
@@ -20,7 +20,7 @@ admin.site.register(User, CoreUserAdmin)
 admin.site.register(Meal)
 admin.site.register(Order)
 admin.site.register(Documents)
-admin.site.register(Subscribtion)
+admin.site.register(Subscription)
 admin.site.register(Offer)
 admin.site.register(Complaint)
 admin.site.register(Category)

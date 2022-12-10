@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Category, Chef, Meal
+from core.models import Category
 from core.serializer import ListMealSerializer
 
 
@@ -25,4 +25,3 @@ class ChefCategorySerializer(serializers.ModelSerializer):
             "name",
             "meal_set",
         ]
-        

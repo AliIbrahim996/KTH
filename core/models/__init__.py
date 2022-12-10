@@ -4,7 +4,7 @@ from .meal import Meal
 from .order import Order
 from .offer import Offer
 from .address import Address
-from .subscribtion import Subscribtion
+from .Subscription import Subscription
 from .category import Category
 from .complaint import Complaint
 from .OrderedMeals import OrderedMeals
@@ -19,6 +19,6 @@ __all__ = [
     'Order',
     'OrderedMeals',
     'Address',
-    'Subscribtion',
+    'Subscription',
     'Complaint'
 ]
