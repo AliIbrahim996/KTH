@@ -30,7 +30,7 @@ class RegistrationView(APIView):
                     chef_serializer.save()
                     documents_set = request.data.pop("documents_set")
                     chef_obj = chef_serializer.instance
-                    token = Token.objects.create(user=chef_obj)
+                    token = Token.objects.get_or_create(user=chef_obj)
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
                     return Response(

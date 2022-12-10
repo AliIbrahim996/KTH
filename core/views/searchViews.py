@@ -7,7 +7,7 @@ from core.serializer import ListMealSerializer, ChefListSerializer
 
 
 class SearchView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     meal_serializer_class = ListMealSerializer
     chef_serializer_class = ChefListSerializer
 
