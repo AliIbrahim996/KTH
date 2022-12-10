@@ -1,4 +1,6 @@
 from django.contrib import admin
+from .core_user_admin import CoreUserAdmin
+
 from core.models import (
     Address,
     Chef,
@@ -14,7 +16,7 @@ from core.models import (
 
 admin.site.register(Address)
 admin.site.register(Chef)
-admin.site.register(User)
+admin.site.register(User, CoreUserAdmin)
 admin.site.register(Meal)
 admin.site.register(Order)
 admin.site.register(Documents)

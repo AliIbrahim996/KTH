@@ -39,7 +39,7 @@ class ChefRegistrationSerializer(serializers.ModelSerializer):
 class ChefListSerializer(serializers.ModelSerializer):
 
     full_name = serializers.CharField(source='user.full_name')
-    user_name = serializers.CharField(source='user.user_name')
+    username = serializers.CharField(source='user.username')
     phone_number = PhoneNumberField(source='user.phone_number')
     email = serializers.EmailField(source='user.email')
     profile_img = serializers.ImageField(source='user.profile_img')
@@ -49,7 +49,7 @@ class ChefListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "full_name",
-            "user_name",
+            "username",
             "phone_number",
             "email",
             "loc_lat",
