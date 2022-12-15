@@ -39,7 +39,7 @@ class RegistrationView(APIView):
                 return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             user_obj.save()
             user_serializer.save()
-            token = Token.objects.create(user=user_obj)
+            token = Token.objects.get_or_create(user=user_obj)
             return Response(
                 {"msg": "New customer is created!", "token": token.key}, status=status.HTTP_201_CREATED
             )
