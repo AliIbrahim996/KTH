@@ -30,7 +30,7 @@ class RegistrationView(APIView):
                     chef_serializer.save()
                     documents_set = request.data.pop("documents_set")
                     chef_obj = chef_serializer.instance
-                    token = Token.objects.get_or_create(user=chef_obj)
+                    token, _ = Token.objects.get_or_create(user=chef_obj)
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
                     return Response(
@@ -39,7 +39,7 @@ class RegistrationView(APIView):
                 return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             user_obj.save()
             user_serializer.save()
-            token = Token.objects.get_or_create(user=user_obj)
+            token, _ = Token.objects.get_or_create(user=user_obj)
             return Response(
                 {"msg": "New customer is created!", "token": token.key}, status=status.HTTP_201_CREATED
             )
