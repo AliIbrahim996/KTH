@@ -44,7 +44,7 @@ def create_user():
     profile_img_ = ["images/profile/f1.jfif", "images/profile/f2.jfif", "images/profile/f3.jfif"]
 
     for i in range(3):
-        user = User(
+        user = User.objects.create(
             id=id_[i],
             full_name=full_name_[i],
             username=user_name_[i],
@@ -70,7 +70,7 @@ def create_chef():
     heart_number_ = [0, 5, 0]
 
     for i in range(3):
-        chef = Chef(
+        chef = Chef.objects.create(
             id=id_[i],
             user=users[i],
             loc_lat=loc_lat_[i],
@@ -93,7 +93,7 @@ def create_category():
     icon_ = ["images/category/ca1_W8woZVl.jfif", "images/category/ca2sw.jfif", "images/category/ca3veg.jfif"]
 
     for i in range(3):
-        category = Category(
+        category = Category.objects.create(
             id=id_[i],
             name=name_[i],
             icon=icon_[i],
@@ -114,7 +114,7 @@ def create_meal():
     category_ = [categories[2], categories[0], categories[0], categories[2], categories[2], categories[0], categories[1], categories[1], categories[1]]
 
     for i in range(9):
-        meal = Meal(
+        meal = Meal.objects.create(
             id=id_[i],
             chef=chef_[i],
             title=title_[i],
@@ -132,10 +132,10 @@ def create_meal():
 def create_data(self):
     """Create new data"""
     self.stdout.write("Create instances")
-    create_user()
-    create_chef()
-    create_category()
-    create_meal()
+    self.stdout.write(create_user())
+    self.stdout.write(create_chef())
+    self.stdout.write(create_category())
+    self.stdout.write(create_meal())
 
 
 def run_seed(self, mode):
