@@ -21,5 +21,6 @@ __all__ = [
     'OrderedMeals',
     'Address',
     'Subscription',
-    'Complaint'
+    'Complaint',
+    'VerificationCode'
 ]

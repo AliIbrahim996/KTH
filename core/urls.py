@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.schemas import get_schema_view
 from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView,\
-    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView
+    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView , ResetPasswordView, SendCodeView, VerifyCodeView
 
 from .views.swagger_ui import SwaggerUITemplateView
 

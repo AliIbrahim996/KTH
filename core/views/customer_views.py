@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from core.models import Documents
+from core.models import Documents, VerificationCode
 
 from core.serializer import (
     PasswordChangeSerializer,
@@ -32,9 +32,7 @@ def send_verification_code(phone_number):
         body='Your verification code is {}'.format(code),
         to=phone_number
     )
-    if message.error_code == 'None':
-        return code
-    return message.error_code
+    return code, message
 
 
 class RegistrationView(APIView):
@@ -55,18 +53,25 @@ class RegistrationView(APIView):
                     token, _ = Token.objects.get_or_create(user=chef_obj)
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
-                    code = send_verification_code(user_obj.phone_number)
-                    verification_code = VerificationCode.objects.create(code=code, user=user_obj)
-                    return Response(
-                        {"msg": "New chef is created!", "token": token.key}, status=status.HTTP_201_CREATED
-                    )
+                    code, message = send_verification_code(user_obj.phone_number)
+                    if message.error_code == 'None':
+                        chef_obj.user.is_active = False
+                        chef_obj.user.save()
+                        verification_code = VerificationCode.objects.create(code=code, user=chef_obj.user)
+                        return Response(
+                            {"msg": "New chef is created!", "token": token.key}, status=status.HTTP_201_CREATED
+                        )
                 return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            user_obj.save()
-            user_serializer.save()
-            token, _ = Token.objects.get_or_create(user=user_obj)
-            return Response(
-                {"msg": "New customer is created!", "token": token.key}, status=status.HTTP_201_CREATED
-            )
+            code, message = send_verification_code(user_obj.phone_number)
+            if message.error_code == 'None':
+                user_obj.is_active = False
+                user_obj.save()
+                user_serializer.save()
+                verification_code = VerificationCode.objects.create(code=code, user=user_obj)
+                token, _ = Token.objects.get_or_create(user=user_obj)
+                return Response(
+                    {"msg": "New customer is created!", "token": token.key}, status=status.HTTP_201_CREATED
+                )
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
