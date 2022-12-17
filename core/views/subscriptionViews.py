@@ -8,7 +8,7 @@ from core.serializer import ChefListSerializer, SubscriptionSerializer
 
 
 class CustomerSubscriptionView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ChefListSerializer
 
     def get(self, request):
@@ -28,7 +28,7 @@ class CustomerSubscriptionView(APIView):
 
 
 class CustomerSubscribeChefView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = SubscriptionSerializer
 
     def post(self, request):

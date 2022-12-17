@@ -1,7 +1,5 @@
-from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework import permissions
-from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from core.models import Chef
@@ -9,7 +7,7 @@ from core.serializer import ChefListSerializer
 
 
 class ChefView(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ChefListSerializer
 
     def get(self, request, chef_id=None):
