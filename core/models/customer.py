@@ -1,11 +1,19 @@
 from django.db import models
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import PermissionsMixin, AbstractUser, UserManager as DjangoUserManager
 from phonenumber_field.modelfields import PhoneNumberField
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
-class UserManager(BaseUserManager):
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+
+class UserManager(DjangoUserManager):
     use_in_migrations = True
 
     def _create_user(self, phone_number, password, **extra_fields):
@@ -36,20 +44,13 @@ class UserManager(BaseUserManager):
         return self.create_user(phone_number, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractUser, PermissionsMixin):
 
     full_name = models.CharField(max_length=50, null=False, blank=False)
-    user_name = models.CharField(max_length=50, null=False, blank=False)
     phone_number = PhoneNumberField(max_length=25, null=False, blank=False, unique=True)
-    email = models.EmailField(max_length=50, blank=False)
-    password = models.CharField(max_length=50, null=False, blank=False)
-    date_created = models.DateTimeField(auto_now=True)
-    is_staff = models.BooleanField(default=False)
     profile_img = models.ImageField(upload_to="images/profile/", null=True)
 
     objects = UserManager()
-
-    # is_active = False
 
     USERNAME_FIELD = "phone_number"
 

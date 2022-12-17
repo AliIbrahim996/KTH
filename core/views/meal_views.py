@@ -9,7 +9,7 @@ from core.serializer import ListMealSerializer, ChefMealSerializer
 
 
 class MealsByChefView(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ListMealSerializer
 
     def get_queryset(self):
@@ -24,7 +24,7 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
 
 
 class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ListMealSerializer
 
     def get_queryset(self):
@@ -39,31 +39,41 @@ class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
 
 
 class MealsViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Meal.objects.all()
     serializer_class = ListMealSerializer
 
 
+class ChefMealsByCategoryView(MealsByCategoryView):
+    def get_queryset(self):
+        category_id = self.kwargs['cat_id']
+        chef_id = self.kwargs['chef_id']
+        if Category.objects.filter(id=category_id).exists() and Chef.objects.filter(id=chef_id).exists():
+            queryset = Meal.objects.filter(category=category_id, chef=chef_id)
+        else:
+            queryset = Meal.objects.none()
+
+        return queryset
+
+
 class MealView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        if request.user.is_authenticated:
-            chef = getattr(request, "user", None)
-
-            if chef is not None:
-                meal_serializer = ChefMealSerializer(chef=chef, data=request.data)
-                if meal_serializer.is_valid():
-                    meal_serializer.save()
-                    return Response(
-                        {"msg": "New Meal is created!"}, status=status.HTTP_201_CREATED
-                    )
-                return Response(meal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        chef = getattr(request, "user", None)
+        if chef is not None:
+            meal_serializer = ChefMealSerializer(chef=chef, data=request.data)
+            if meal_serializer.is_valid():
+                meal_serializer.save()
+                return Response(
+                    {"msg": "New Meal is created!"}, status=status.HTTP_201_CREATED
+                )
+            return Response(meal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            {"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST
+            {"msg": "Missing user attribute!"}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def get(self, request, pk=None):
-
         chef = getattr(request, "user", None)
         if chef is not None:
             if pk:

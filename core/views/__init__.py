@@ -1,8 +1,9 @@
-from .customer_views import RegistrationView, LoginView, LogoutView, ChangePasswordView, \
-    ResetPasswordView, VerifyCodeView, SendCodeView
-from .meal_views import MealsByCategoryView, MealsByChefView, MealsViewSet, MealView
-from .category_views import CategoryView
+from .customer_views import RegistrationView, LoginView, LogoutView, ChangePasswordView
+from .meal_views import MealsByCategoryView, ChefMealsByCategoryView, MealsByChefView, MealsViewSet, MealView
+from .category_views import CategoryView, ChefCategoryView
 from .chef_views import ChefView, BestChefsView
+from .subscriptionViews import CustomerSubscriptionView, CustomerSubscribeChefView
+from .searchViews import SearchView
 
 __all__ = [
     "RegistrationView",
@@ -10,13 +11,15 @@ __all__ = [
     "LogoutView",
     "ChangePasswordView",
     "MealsByCategoryView",
+    "ChefMealsByCategoryView",
     "MealsByChefView",
     "MealsViewSet",
     "MealView",
     "CategoryView",
+    "ChefCategoryView",
     "ChefView",
     "BestChefsView",
-    "ResetPasswordView",
-    "VerifyCodeView",
-    "SendCodeView",
+    "CustomerSubscriptionView",
+    "CustomerSubscribeChefView",
+    "SearchView"
 ]
