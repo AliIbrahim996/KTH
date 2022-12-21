@@ -2,7 +2,7 @@ from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 from rest_framework import status, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.models import Cart, CartItem, customer
+from core.models import Cart, CartItem, User, Meal
 from core.serializer import CartSerializer, CartItemSerializer
 
 
@@ -21,18 +21,19 @@ class CartView(APIView):
 
     def post(self, request):
         customer_obj = getattr(request, "user", None)
-        meal = getattr(request, "meal", None)
+        meal = request.data["meal"]
         if customer_obj is not None and meal is not None:
             cart = Cart.objects.filter(customer=customer_obj, state="open")
+            meal_obj = Meal.objects.get(pk=meal)
             if cart is None:
                 cart_serializer = CartSerializer(customer_obj, data=request.data)
                 if cart_serializer.is_valid():
                     cart_serializer.save()
                     cart = cart_serializer.instance
-                    return create_cart_item(cart, meal, request)
+                    return create_cart_item(cart, meal_obj, request)
                 else:
                     return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return create_cart_item(cart, meal, request)
+            return create_cart_item(cart, meal_obj, request)
 
 
 class CartByUserView(viewsets.ReadOnlyModelViewSet):
@@ -40,7 +41,7 @@ class CartByUserView(viewsets.ReadOnlyModelViewSet):
     cart_item_serializer_class = CartItemSerializer
 
     def get_queryset(self):
-        customer_obj = customer.objects.get(self.kwargs['customer_id'])
+        customer_obj = User.objects.get(self.kwargs['customer_id'])
         cart = Cart.objects.filter(customer=customer_obj, state="open")
         if cart is not None:
             cart_items = CartItem.objects.filter(cart=cart)

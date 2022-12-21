@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Cart, CartItem, Meal, customer
+from core.models import Cart, CartItem, Meal, User
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    customer = customer
+    customer = User()
 
     def __init__(self, customer, instance=None, data=..., **kwargs):
         self.customer = customer

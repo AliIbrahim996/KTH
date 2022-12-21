@@ -30,7 +30,7 @@ urlpatterns = [
     path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
     path("search", SearchView.as_view(), name="Search"),
     path("customer/cart/create", CartView.as_view(), name="create cart"),
-    path("customer/cart", CartByUserView.as_view(), name="get cart"),
+    path("customer/cart", CartByUserView.as_view({'get': 'retrieve'}), name="get cart"),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.
