@@ -6,7 +6,7 @@ from core.models.customer import User
 class Cart(models.Model):
 
     class CartStates(models.TextChoices):
-        OPENED = "opend"
+        OPENED = "opened"
         CLOSED = "closed"
 
     customer = models.ForeignKey(User, on_delete=models.CASCADE)

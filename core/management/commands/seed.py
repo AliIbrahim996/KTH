@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from core.models import *
-import random
+from rest_framework.authtoken.models import Token
 
 """ Clear all data and creates Skills """
 MODE_REFRESH = 'refresh'
@@ -28,6 +28,7 @@ def clear_data(self):
     Chef.objects.all().delete()
     Category.objects.all().delete()
     Meal.objects.all().delete()
+    Token.objects.all().delete()
 
 
 users = [None] * 3

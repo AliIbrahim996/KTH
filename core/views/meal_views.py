@@ -95,6 +95,7 @@ class MealView(APIView):
         data = request.data.get('meal')
         serializer = ChefMealSerializer(instance=saved_meal, data=data, partial=True)
 
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             meal = serializer.save()
-        return Response({"success": "meal '{}' updated successfully".format(meal.title)})
+            return Response({"msg": "meal '{}' updated successfully".format(meal.title)}, status=status.HTTP_200_OK)
+        return Response({"msg": "{}".format(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)

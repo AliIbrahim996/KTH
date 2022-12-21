@@ -36,6 +36,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
+        fields = []
 
     def create(self, validated_data):
         cart = Cart.objects.create(
@@ -45,8 +46,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class CartItemMealSerializer(serializers.ModelSerializer):
-
-    meal = ListMealSerializer(many=True)
+    meal = ListMealSerializer()
 
     class Meta:
         model = CartItem
@@ -58,14 +58,13 @@ class CartItemMealSerializer(serializers.ModelSerializer):
 
 
 class CartMealSerializer(serializers.ModelSerializer):
-
-    CartItem_set = CartItemMealSerializer(many=True)
+    cart_item_set = CartItemMealSerializer(many=True)
 
     class Meta:
         model = Cart
         fields = [
             "id",
-            "user",
+            "customer",
             "state",
-            "CartItem_set",
+            "cart_item_set",
         ]
