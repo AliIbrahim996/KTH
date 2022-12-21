@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from core.models import Cart, CartItem, Meal, User
+from core.serializer import ListMealSerializer
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -41,3 +42,30 @@ class CartSerializer(serializers.ModelSerializer):
             customer=self.customer,
         )
         return cart
+
+
+class CartItemMealSerializer(serializers.ModelSerializer):
+
+    meal = ListMealSerializer(many=True)
+
+    class Meta:
+        model = CartItem
+        fields = [
+            "id",
+            "count",
+            "meal",
+        ]
+
+
+class CartMealSerializer(serializers.ModelSerializer):
+
+    CartItem_set = CartItemMealSerializer(many=True)
+
+    class Meta:
+        model = Cart
+        fields = [
+            "id",
+            "user",
+            "state",
+            "CartItem_set",
+        ]

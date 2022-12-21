@@ -3,7 +3,7 @@ from rest_framework import status, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from core.models import Cart, CartItem, User, Meal
-from core.serializer import CartSerializer, CartItemSerializer
+from core.serializer import CartSerializer, CartItemSerializer, CartMealSerializer
 
 
 def create_cart_item(cart, meal, request):
@@ -33,27 +33,24 @@ class CartView(APIView):
                     return create_cart_item(cart, meal_obj, request)
                 else:
                     return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # check if meal chef is same for all meals in cart
             return create_cart_item(cart, meal_obj, request)
 
 
 class CartByUserView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-    cart_item_serializer_class = CartItemSerializer
+    serializer_class = CartMealSerializer
 
     def get_queryset(self):
         customer_obj = User.objects.get(self.kwargs['customer_id'])
         cart = Cart.objects.filter(customer=customer_obj, state="open")
         if cart is not None:
-            cart_items = CartItem.objects.filter(cart=cart)
-            sub_total = cart_items.aggregate(
+            sub_total = CartItem.objects.filter(cart=cart).aggregate(
                 total=Sum(ExpressionWrapper(
                     F('meal__price') * 'count', output_field=DecimalField())))['total']
             # check if we need to serialize meal or not.
-            cart_items_data = self.cart_item_serializer_class(cart_items, many=True).data
+            cart_items_data = self.serializer_class(Cart).data
             return Response({
-                "cart_id": cart.pk,
-                "cart_state": cart.state,
-                "customer": cart.customer,
                 "cart_items": cart_items_data,
                 "sub_total": sub_total
             }, status=status.HTTP_200_OK)
