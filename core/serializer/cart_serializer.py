@@ -35,13 +35,9 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = [
-            "state"
-        ]
 
     def create(self, validated_data):
         cart = Cart.objects.create(
             customer=self.customer,
-            state=validated_data["state"],
         )
         return cart
