@@ -8,6 +8,8 @@ from .Subscription import Subscription
 from .category import Category
 from .complaint import Complaint
 from .OrderedMeals import OrderedMeals
+from .cart import Cart
+from .cartItem import CartItem
 
 __all__ = [
     'Chef',
@@ -20,5 +22,7 @@ __all__ = [
     'OrderedMeals',
     'Address',
     'Subscription',
-    'Complaint'
+    'Complaint',
+    'Cart',
+    'CartItem',
 ]
