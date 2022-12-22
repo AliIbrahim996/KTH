@@ -1,4 +1,5 @@
 from django.db.models import Sum, F, ExpressionWrapper, DecimalField
+from django.http import Http404
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,6 +30,12 @@ def update_cart_item(cart_item, cart, meal_obj, request):
 
 class CartView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            return CartItem.objects.get(pk=pk)
+        except CartItem.DoesNotExist:
+            raise Http404
 
     def post(self, request):
         user = request.user
@@ -78,3 +85,8 @@ class CartView(APIView):
                 "sub_total": sub_total
             }, status=status.HTTP_200_OK)
         return Response({"msg": "No cart found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request):
+        cart_item = self.get_object(request.data["cart_item_id"])
+        cart_item.delete()
+        return Response({"msg: Item removed from cart!"}, status=status.HTTP_200_OK)
