@@ -14,6 +14,9 @@ class Meal(models.Model):
     dishes_count = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
+    pre_order = models.BooleanField(default=False)
+    pickup = models.BooleanField(default=False)
+    delivery = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
