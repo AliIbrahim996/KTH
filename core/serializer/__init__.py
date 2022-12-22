@@ -19,5 +19,4 @@ __all__ = [
     "CartItemSerializer",
     "CartMealSerializer",
     "CartItemMealSerializer",
-    "ListMealSerializer",
 ]
