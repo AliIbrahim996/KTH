@@ -14,6 +14,7 @@ from core.models import (
     Category,
     Cart,
     CartItem,
+    MealsRating,
 )
 
 admin.site.register(Address)
@@ -28,3 +29,4 @@ admin.site.register(Complaint)
 admin.site.register(Category)
 admin.site.register(Cart)
 admin.site.register(CartItem)
+admin.site.register(MealsRating)
