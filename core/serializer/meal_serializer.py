@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from rest_framework import serializers
 from core.models import Meal, Chef
 from core.models.meals_rate import MealsRating
@@ -72,11 +73,7 @@ class ListMealSerializer(serializers.ModelSerializer):
         ]
 
     def get_avg_rating(self, meal):
-        rate_sum = 0
         ratings = MealsRating.objects.filter(meal=meal)
-        for rate in ratings:
-            rate_sum += rate.stars
-        if len(ratings) > 0:
-            return rate_sum // len(ratings)
-        else:
-            return 0
+        if not ratings:
+            return 0.0
+        return ratings.aggregate(avg_rating=Avg('stars'))['avg_rating']
