@@ -8,3 +8,4 @@ tzdata==2022.5
 django-rest-authtoken
 uritemplate
 pyyaml
+stripe
