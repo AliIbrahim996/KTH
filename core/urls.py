@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.schemas import get_schema_view
 from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView,\
-    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView
+    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView, CartView
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -29,7 +29,7 @@ urlpatterns = [
     path("customer/subscription", CustomerSubscriptionView.as_view(), name="Customer subscriptions"),
     path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
     path("search", SearchView.as_view(), name="Search"),
-
+    path("customer/cart", CartView.as_view(), name="Cart endpoints"),
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.
     #   * Provide view name for use with `reverse()`.

@@ -12,6 +12,8 @@ from core.models import (
     Offer,
     Complaint,
     Category,
+    Cart,
+    CartItem,
 )
 
 admin.site.register(Address)
@@ -24,3 +26,5 @@ admin.site.register(Subscription)
 admin.site.register(Offer)
 admin.site.register(Complaint)
 admin.site.register(Category)
+admin.site.register(Cart)
+admin.site.register(CartItem)
