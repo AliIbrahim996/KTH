@@ -1,5 +1,7 @@
+from django.db.models import Avg
 from rest_framework import serializers
 from core.models import Meal, Chef
+from core.models.meals_rate import MealsRating
 
 
 class ChefMealSerializer(serializers.ModelSerializer):
@@ -50,6 +52,7 @@ class ListMealSerializer(serializers.ModelSerializer):
 
     chef = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
+    rate = serializers.SerializerMethodField('get_avg_rating')
 
     class Meta:
         model = Meal
@@ -63,4 +66,14 @@ class ListMealSerializer(serializers.ModelSerializer):
             "dishes_count",
             "is_deleted",
             "category",
+            "rate",
+            "pre_order",
+            "pickup",
+            "delivery",
         ]
+
+    def get_avg_rating(self, meal):
+        ratings = MealsRating.objects.filter(meal=meal)
+        if not ratings:
+            return 0.0
+        return ratings.aggregate(avg_rating=Avg('stars'))['avg_rating']

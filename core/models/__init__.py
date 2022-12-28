@@ -10,6 +10,7 @@ from .complaint import Complaint
 from .OrderedMeals import OrderedMeals
 from .cart import Cart
 from .cartItem import CartItem
+from .meals_rate import MealsRating
 
 __all__ = [
     'Chef',
@@ -25,4 +26,5 @@ __all__ = [
     'Complaint',
     'Cart',
     'CartItem',
+    'MealsRating',
 ]
