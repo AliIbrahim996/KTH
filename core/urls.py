@@ -1,9 +1,9 @@
 from django.urls import path
 from rest_framework.permissions import AllowAny
 from rest_framework.schemas import get_schema_view
-from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView,\
-    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView,\
-    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView, CartView
+from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView, \
+    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView, \
+    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView, CartView, WishListAPIView
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -17,11 +17,13 @@ urlpatterns = [
     path("chef/", ChefView.as_view(), name="chefs"),
     path("chef/<int:chef_id>/", ChefView.as_view(), name="chefs"),
     path("chef/<int:chef_id>/category/", ChefCategoryView.as_view({'get': 'list'}), name="chefs category"),
-    path("chef/<int:chef_id>/category/<int:cat_id>/meals/", ChefMealsByCategoryView.as_view({'get': 'list'}), name="chefs Meals by category"),
+    path("chef/<int:chef_id>/category/<int:cat_id>/meals/", ChefMealsByCategoryView.as_view({'get': 'list'}),
+         name="chefs Meals by category"),
     path("chef/best", BestChefsView.as_view(), name="best chefs"),
     path("category", CategoryView.as_view({'get': 'list'}), name="category"),
     path("category/<int:cat_id>/meals/", MealsByCategoryView.as_view({'get': 'list'}), name="Meals by category"),
-    path("category/<int:cat_id>/meals/<int:pk>/", MealsByCategoryView.as_view({'get': 'retrieve'}), name="Meals by category"),
+    path("category/<int:cat_id>/meals/<int:pk>/", MealsByCategoryView.as_view({'get': 'retrieve'}),
+         name="Meals by category"),
     path("meal", MealsViewSet.as_view({'get': 'list'}), name="meals"),
     path("meal/<int:pk>/", MealsViewSet.as_view({'get': 'retrieve'}), name="meals"),
     path("meal/chef/<int:chef_id>/", MealsByChefView.as_view({'get': 'list'}), name="Meals by chef"),
@@ -30,6 +32,9 @@ urlpatterns = [
     path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
     path("search", SearchView.as_view(), name="Search"),
     path("customer/cart", CartView.as_view(), name="Cart endpoints"),
+    path("wishlist/", WishListAPIView.as_view(), name="Add and list wishlist"),
+    path("wishlist/<int:meal_id>/", WishListAPIView.as_view(), name="Remove from wishlist"),
+
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.
     #   * Provide view name for use with `reverse()`.
