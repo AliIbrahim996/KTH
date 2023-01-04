@@ -50,8 +50,8 @@ class ChefListSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email')
     profile_img = serializers.ImageField(source='user.profile_img')
     meals_set = SimpleMealSerializer(many=True)
-    followers = serializers.SerializerMethodField()
-    is_followed = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField('get_followers')
+    is_followed = serializers.SerializerMethodField('get_is_followed')
 
     class Meta:
         model = Chef
@@ -82,8 +82,6 @@ class ChefListSerializer(serializers.ModelSerializer):
 
     def get_is_followed(self, obj):
         user_id = self.context.get("user_id")
-        following = Subscription.objects.filter(chef=obj.id, customer=user_id)
-        if not following:
-            return False
-        else:
+        if Subscription.objects.filter(chef=obj.id, customer=user_id):
             return True
+        return False
