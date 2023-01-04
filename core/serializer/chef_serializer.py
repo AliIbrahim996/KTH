@@ -38,6 +38,7 @@ class SimpleMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = [
+            "id",
             "image",
         ]
 
