@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.models import Chef
+from core.models import Chef, Subscription
 from core.serializer import ChefListSerializer
 
 
@@ -16,12 +16,15 @@ class ChefView(APIView):
         else:
             chef = Chef.objects.all()
 
-        serializer = self.serializer_class(chef, many=True)
+        context = {"user_id": request.user.id}
+
+        serializer = self.serializer_class(chef, many=True, context=context)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class BestChefsView(ChefView):
+    serializer_class = ChefListSerializer
 
     def get(self, request, *args, **kwargs):
         chefs = Chef.objects.filter().order_by("-heart_number")
