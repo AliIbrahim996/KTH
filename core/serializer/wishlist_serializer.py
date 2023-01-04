@@ -13,6 +13,7 @@ class WishListSerializer(serializers.ModelSerializer):
             "meal",
         ]
 
-    def create(self, validated_data):
-        customer = self.context.get("customer")
-        return WishList.objects.create(meal=validated_data["meal"], customer=customer)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We pass the "upper serializer" context to the "nested one"
+        self.fields['meal'].context.update(self.context)

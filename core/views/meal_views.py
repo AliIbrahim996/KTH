@@ -12,6 +12,11 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ListMealSerializer
 
+    def get_serializer_context(self):
+        context = super(MealsByChefView, self).get_serializer_context()
+        context.update({"user_id": self.request.user.id})
+        return context
+
     def get_queryset(self):
         chef_id = self.kwargs['chef_id']
         chef = Chef.objects.filter(id=chef_id)
@@ -26,6 +31,11 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
 class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ListMealSerializer
+
+    def get_serializer_context(self):
+        context = super(MealsByCategoryView, self).get_serializer_context()
+        context.update({"user_id": self.request.user.id})
+        return context
 
     def get_queryset(self):
         category_id = self.kwargs['cat_id']
@@ -43,6 +53,10 @@ class MealsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = ListMealSerializer
 
+    def get_serializer_context(self):
+        context = super(MealsViewSet, self).get_serializer_context()
+        context.update({"user_id": self.request.user.id})
+        return context
 
 class ChefMealsByCategoryView(MealsByCategoryView):
     def get_queryset(self):

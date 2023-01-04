@@ -14,8 +14,8 @@ class WishListAPIView(APIView):
     def get(self, request):
         customer_id = request.user.id
         wish_list = WishList.objects.filter(customer=customer_id)
-
-        wish_list_serializer = WishListSerializer(wish_list, many=True)
+        context = {"user_id": request.user.id}
+        wish_list_serializer = WishListSerializer(wish_list, many=True, context=context)
         return Response({
             "wish_list": wish_list_serializer.data,
         }, status=status.HTTP_200_OK)
