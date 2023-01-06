@@ -5,6 +5,7 @@ from .category_serializer import CategorySerializer, ChefCategorySerializer
 from .subscriptionSerializer import SubscriptionSerializer
 from .cart_serializer import CartSerializer, CartItemSerializer, CartMealSerializer, CartItemMealSerializer
 from .wishlist_serializer import WishListSerializer
+from .CustomerSerializer import CustomerSerializer
 
 __all__ = [
     "RegistrationSerializer",
@@ -21,4 +22,5 @@ __all__ = [
     "CartMealSerializer",
     "CartItemMealSerializer",
     "WishListSerializer",
+    "CustomerSerializer",
 ]
