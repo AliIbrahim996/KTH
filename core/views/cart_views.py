@@ -41,24 +41,27 @@ class CartView(APIView):
         user = request.user
         meal = request.data["meal"]
         if user is not None and meal is not None:
-            cart = Cart.objects.filter(customer=user, state="opened")
-            meal_obj = Meal.objects.get(pk=meal)
-            if not cart:
-                cart_serializer = CartSerializer(customer=user, data=request.data)
-                if cart_serializer.is_valid():
-                    cart_serializer.save()
-                    cart = cart_serializer.instance
-                    return create_cart_item(cart, meal_obj, request)
-                else:
-                    return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            cart_item_set = cart.prefetch_related("cart_item_set").get().cart_item_set
-            chef_id = cart_item_set.first().meal.chef.id
-            if meal_obj.chef.id == chef_id:
-                cart_item = cart_item_set.filter(meal=meal_obj)
-                if not cart_item:
-                    return create_cart_item(cart[0], meal_obj, request)
-                return update_cart_item(cart_item[0], cart[0], meal_obj, request)
-            return Response({"Meals must be related to chef {}".format(meal_obj.chef.user.full_name)},
+            if Meal.objects.get(pk=meal).dishes_count >= request["count"]:
+                cart = Cart.objects.filter(customer=user, state="opened")
+                meal_obj = Meal.objects.get(pk=meal)
+                if not cart:
+                    cart_serializer = CartSerializer(customer=user, data=request.data)
+                    if cart_serializer.is_valid():
+                        cart_serializer.save()
+                        cart = cart_serializer.instance
+                        return create_cart_item(cart, meal_obj, request)
+                    else:
+                        return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                cart_item_set = cart.prefetch_related("cart_item_set").get().cart_item_set
+                chef_id = cart_item_set.first().meal.chef.id
+                if meal_obj.chef.id == chef_id:
+                    cart_item = cart_item_set.filter(meal=meal_obj)
+                    if not cart_item:
+                        return create_cart_item(cart[0], meal_obj, request)
+                    return update_cart_item(cart_item[0], cart[0], meal_obj, request)
+                return Response({"Meals must be related to chef {}".format(meal_obj.chef.user.full_name)},
+                                status=status.HTTP_400_BAD_REQUEST)
+            return Response({"The requested number of dishes is unavailable!"},
                             status=status.HTTP_400_BAD_REQUEST)
         return Response({"Invalid user or meal {}"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -66,10 +69,13 @@ class CartView(APIView):
         user = request.user
         meal = request.data["meal"]
         if user is not None and meal is not None:
-            cart = Cart.objects.filter(customer=user, state="opened")
-            meal_obj = Meal.objects.get(pk=meal)
-            cart_item = cart.prefetch_related("cart_item_set").get().cart_item_set.filter(meal=meal_obj)[0]
-            return update_cart_item(cart_item, cart[0], meal_obj, request)
+            if Meal.objects.get(pk=meal).dishes_count >= request["count"]:
+                cart = Cart.objects.filter(customer=user, state="opened")
+                meal_obj = Meal.objects.get(pk=meal)
+                cart_item = cart.prefetch_related("cart_item_set").get().cart_item_set.filter(meal=meal_obj)[0]
+                return update_cart_item(cart_item, cart[0], meal_obj, request)
+            return Response({"The requested number of dishes is unavailable!"},
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response({"Invalid user or meal {}"}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
