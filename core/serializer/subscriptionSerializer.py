@@ -1,21 +1,20 @@
 from rest_framework import serializers
-from core.models import Subscription
-from core.serializer import CustomerSerializer, ChefListSerializer
+from core.models import Subscription, Chef, User
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    chef = ChefListSerializer
-    customer = CustomerSerializer
+    chef = Chef()
+    customer = User()
 
-    def __init__(self):
-        # @todo test is required
-        self.chef = ChefListSerializer(self.context.get("chef"))
-        self.customer = CustomerSerializer(self.context.get("customer"))
+    def __init__(self, *args, **kwargs):
+        context = kwargs.pop('context')
+        self.chef = Chef.objects.get(pk=context.get("chef"))
+        self.customer = User.objects.get(pk=context.get("customer"))
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = Subscription
-        fields = [
-            "id",
-            "chef",
-            "customer",
-        ]
+        fields = []
+
+    def create(self, validated_data):
+        return Subscription.objects.create(customer=self.customer, chef=self.chef)
