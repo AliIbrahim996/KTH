@@ -7,9 +7,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     customer = User()
 
     def __init__(self, *args, **kwargs):
-        context = kwargs.pop('context')
-        self.chef = Chef.objects.get(pk=context.get("chef"))
-        self.customer = User.objects.get(pk=context.get("customer"))
+        if len(kwargs):
+            context = kwargs.pop('context')
+            self.chef = Chef.objects.get(pk=context.get("chef"))
+            self.customer = User.objects.get(pk=context.get("customer"))
         super().__init__(*args, **kwargs)
 
     class Meta:

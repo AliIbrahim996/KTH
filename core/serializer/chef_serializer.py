@@ -75,7 +75,7 @@ class ChefListSerializer(serializers.ModelSerializer):
 
     def get_followers(self, obj):
         try:
-            followers = Subscription.objects.get(chef=obj.id).count()
+            followers = Subscription.objects.filter(chef=obj.id).count()
         except Subscription.DoesNotExist:
             followers = 0
         return followers

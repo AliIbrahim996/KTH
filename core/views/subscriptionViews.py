@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework import permissions
 from core.models import Subscription, Chef
 from django.db.models import Q
-from core.serializer import SubscriptionSerializer
+from core.serializer import SubscriptionSerializer, ChefListSerializer
 
 
 class CustomerSubscribeChefView(viewsets.ModelViewSet):
@@ -28,11 +28,11 @@ class CustomerSubscribeChefView(viewsets.ModelViewSet):
         # Get all unsubscribed chefs
         un_subscribed_chefs = Chef.objects.filter(~Q(id__in=subscribed_chefs))
         # Serialize data
-        subscribed_chefs_serializer = self.serializer_class(chefs, many=True)
-        un_subscribed_chefs_serializer = self.serializer_class(un_subscribed_chefs, many=True)
+        subscribed_chefs_serializer = ChefListSerializer(chefs, many=True)
+        un_subscribed_chefs_serializer = ChefListSerializer(un_subscribed_chefs, many=True)
         return Response({
-            "subscribed_chefs": subscribed_chefs_serializer.data,
-            "un_subscribed_chefs": un_subscribed_chefs_serializer.data
+            "subscribed_chefs": [subscribed_chefs_serializer.data],
+            "un_subscribed_chefs": [un_subscribed_chefs_serializer.data]
         }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
