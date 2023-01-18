@@ -41,7 +41,7 @@ class CartView(APIView):
         user = request.user
         meal = request.data["meal"]
         if user is not None and meal is not None:
-            if Meal.objects.get(pk=meal).dishes_count >= request["count"]:
+            if Meal.objects.get(pk=meal).dishes_count >= request.data["count"]:
                 cart = Cart.objects.filter(customer=user, state="opened")
                 meal_obj = Meal.objects.get(pk=meal)
                 if not cart:
@@ -69,7 +69,7 @@ class CartView(APIView):
         user = request.user
         meal = request.data["meal"]
         if user is not None and meal is not None:
-            if Meal.objects.get(pk=meal).dishes_count >= request["count"]:
+            if Meal.objects.get(pk=meal).dishes_count >= request.data["count"]:
                 cart = Cart.objects.filter(customer=user, state="opened")
                 meal_obj = Meal.objects.get(pk=meal)
                 cart_item = cart.prefetch_related("cart_item_set").get().cart_item_set.filter(meal=meal_obj)[0]
