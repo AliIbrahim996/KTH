@@ -53,14 +53,16 @@ class CartView(APIView):
                     else:
                         return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 cart_item_set = cart.prefetch_related("cart_item_set").get().cart_item_set
-                chef_id = cart_item_set.first().meal.chef.id
-                if meal_obj.chef.id == chef_id:
-                    cart_item = cart_item_set.filter(meal=meal_obj)
-                    if not cart_item:
-                        return create_cart_item(cart[0], meal_obj, request)
-                    return update_cart_item(cart_item[0], cart[0], meal_obj, request)
-                return Response({"Meals must be related to chef {}".format(meal_obj.chef.user.full_name)},
-                                status=status.HTTP_400_BAD_REQUEST)
+                if cart_item_set.first():
+                    chef_id = cart_item_set.first().meal.chef.id
+                    if meal_obj.chef.id == chef_id:
+                        cart_item = cart_item_set.filter(meal=meal_obj)
+                        if not cart_item:
+                            return create_cart_item(cart[0], meal_obj, request)
+                        return update_cart_item(cart_item[0], cart[0], meal_obj, request)
+                    return Response({"Meals must be related to chef {}".format(meal_obj.chef.user.full_name)},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                return create_cart_item(cart[0], meal_obj, request)
             return Response({"The requested number of dishes is unavailable!"},
                             status=status.HTTP_400_BAD_REQUEST)
         return Response({"Invalid user or meal {}"}, status=status.HTTP_400_BAD_REQUEST)
