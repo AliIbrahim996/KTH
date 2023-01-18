@@ -9,3 +9,5 @@ django-rest-authtoken
 uritemplate
 pyyaml
 twilio
+django-phonenumber-field
+django-phonenumbers

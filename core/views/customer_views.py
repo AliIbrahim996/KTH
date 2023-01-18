@@ -10,6 +10,7 @@ from core.serializer import (
     PasswordChangeSerializer,
     ChefRegistrationSerializer,
     RegistrationSerializer,
+    CustomerSerializer,
 )
 from rest_framework import permissions
 from core.models import User
@@ -93,13 +94,14 @@ class LoginView(APIView):
                 {"msg": "Unregistered account"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # if user is not None:
         if user.is_active:
             if not request.user.is_authenticated:
                 if user.check_password(password):
                     token, _ = Token.objects.get_or_create(user=user)
                     login(request, user)
-                    return Response({"msg": "Login Success", "token": token.key}, status=status.HTTP_200_OK)
+                    user_data = CustomerSerializer(user)
+                    return Response({"msg": "Login Success", "token": token.key, "user": user_data.data},
+                                    status=status.HTTP_200_OK)
                 return Response(
                     {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
                 )

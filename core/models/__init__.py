@@ -9,6 +9,10 @@ from .category import Category
 from .complaint import Complaint
 from .OrderedMeals import OrderedMeals
 from .verification_code import VerificationCode
+from .cart import Cart
+from .cartItem import CartItem
+from .meals_rate import MealsRating
+from .wishlist import WishList
 
 __all__ = [
     'Chef',
@@ -22,5 +26,9 @@ __all__ = [
     'Address',
     'Subscription',
     'Complaint',
-    'VerificationCode'
+    'VerificationCode',
+    'Cart',
+    'CartItem',
+    'MealsRating',
+    'WishList',
 ]
