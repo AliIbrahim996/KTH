@@ -1,9 +1,10 @@
 from django.urls import path
 from rest_framework.permissions import AllowAny
 from rest_framework.schemas import get_schema_view
-from .views import RegistrationView, LoginView, LogoutView, ChangePasswordView, \
-    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView, ChefMealsByCategoryView, \
-    ChefCategoryView, CustomerSubscribeChefView, CustomerSubscriptionView, SearchView, CartView, WishListAPIView
+from .views import (RegistrationView, LoginView, LogoutView, ChangePasswordView, \
+                    ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView,
+                    ChefMealsByCategoryView, \
+                    ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView)
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -28,12 +29,13 @@ urlpatterns = [
     path("meal/<int:pk>/", MealsViewSet.as_view({'get': 'retrieve'}), name="meals"),
     path("meal/chef/<int:chef_id>/", MealsByChefView.as_view({'get': 'list'}), name="Meals by chef"),
     path("meal/chef/<int:chef_id>/<int:pk>/", MealsByChefView.as_view({'get': 'retrieve'}), name="Meals by chef"),
-    path("customer/subscription", CustomerSubscriptionView.as_view(), name="Customer subscriptions"),
-    path("customer/chef/subscribe", CustomerSubscribeChefView.as_view(), name="Customer subscribe chef"),
+    path("customer/chef/subscribe", CustomerSubscribeChefView.as_view({'get': 'list'}), name="Customer subscriptions"),
+    path("customer/chef/<int:chef_id>/subscribe", CustomerSubscribeChefView.as_view({'post': 'create'})),
+    path("customer/chef/subscribe/<int:pk>", CustomerSubscribeChefView.as_view({'delete': 'destroy'})),
     path("search", SearchView.as_view(), name="Search"),
     path("customer/cart", CartView.as_view(), name="Cart endpoints"),
-    path("wishlist/", WishListAPIView.as_view(), name="Add and list wishlist"),
     path("wishlist/<int:meal_id>/", WishListAPIView.as_view(), name="Remove from wishlist"),
+    path("wishlist/", WishListAPIView.as_view(), name="Add and list wishlist"),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.

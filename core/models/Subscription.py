@@ -4,8 +4,5 @@ from .customer import User
 
 
 class Subscription(models.Model):
-    chef = models.ForeignKey(Chef, on_delete=models.CASCADE)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.customer}, {self.chef}'
+    chef = models.ForeignKey(Chef, on_delete=models.CASCADE, db_column="chef", related_name="subscription_set")
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, db_column="customer", related_name="subscription_set")
