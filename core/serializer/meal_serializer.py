@@ -1,5 +1,7 @@
+from django.db.models import Avg
 from rest_framework import serializers
-from core.models import Meal, Chef
+from core.models import Meal, Chef, WishList
+from core.models.meals_rate import MealsRating
 
 
 class ChefMealSerializer(serializers.ModelSerializer):
@@ -43,13 +45,14 @@ class ChefMealSerializer(serializers.ModelSerializer):
         instance.is_deleted = validated_data.get('author_id', instance.is_deleted)
 
         instance.save()
-        return 
-        
-    
-class ListMealSerializer(serializers.ModelSerializer):
+        return
 
+
+class ListMealSerializer(serializers.ModelSerializer):
     chef = serializers.StringRelatedField()
     category = serializers.StringRelatedField()
+    rate = serializers.SerializerMethodField('get_avg_rating')
+    is_liked = serializers.SerializerMethodField('get_is_liked')
 
     class Meta:
         model = Meal
@@ -63,4 +66,21 @@ class ListMealSerializer(serializers.ModelSerializer):
             "dishes_count",
             "is_deleted",
             "category",
+            "rate",
+            "pre_order",
+            "pickup",
+            "delivery",
+            "is_liked",
         ]
+
+    def get_avg_rating(self, meal):
+        ratings = MealsRating.objects.filter(meal=meal)
+        if not ratings:
+            return 0.0
+        return ratings.aggregate(avg_rating=Avg('stars'))['avg_rating']
+
+    def get_is_liked(self, meal):
+        user_id = self.context.get("user_id")
+        if WishList.objects.filter(meal=meal.id, customer=user_id):
+            return True
+        return False

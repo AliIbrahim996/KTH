@@ -9,3 +9,5 @@ django-rest-authtoken
 uritemplate
 pyyaml
 stripe
+django-phonenumber-field
+django-phonenumbers

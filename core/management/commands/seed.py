@@ -69,6 +69,7 @@ def create_chef():
     loc_lan_ = ["32.584111", "44.584111", "32.584111"]
     id_card_ = ["images/id1.jfif", "images/id2.png", "images/id3.jfif"]
     heart_number_ = [0, 5, 0]
+    delivery_cost = [4, 5, 6]
 
     for i in range(3):
         chef = Chef.objects.create(
@@ -78,6 +79,7 @@ def create_chef():
             loc_lan=loc_lan_[i],
             id_card=id_card_[i],
             heart_number=heart_number_[i],
+            delivery_cost=delivery_cost[i],
         )
         chef.save()
         chefs[i] = chef
