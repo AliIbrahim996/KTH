@@ -44,14 +44,22 @@ class CartView(APIView):
             raise Http404
 
     def post(self, request):
+        """Creat new cart.
+
+        This request will create a new cart if it is not excites or it will append the cart with new cart item.
+        """
         user = request.user
         meal = request.data["meal"]
+        # Check if user is not empty or meal is not empty
         if user is not None and meal is not None:
+            # Check if the requested count could be retrieved
             if Meal.objects.get(pk=meal).dishes_count >= request.data["count"]:
                 cart = Cart.objects.filter(customer=user, state="opened")
                 meal_obj = Meal.objects.get(pk=meal)
+                # Check if cart is s not excites.
                 if not cart:
                     cart_serializer = CartSerializer(customer=user, data=request.data)
+                    # Create new cart and append it with a new cart item.
                     if cart_serializer.is_valid():
                         cart_serializer.save()
                         cart = cart_serializer.instance
@@ -59,10 +67,13 @@ class CartView(APIView):
                     else:
                         return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 cart_item_set = cart.prefetch_related("cart_item_set").get().cart_item_set
+                # Check if we have a previous cart item
                 if cart_item_set.first():
                     chef_id = cart_item_set.first().meal.chef.id
+                    # Check if new cart item is related to the same chef.
                     if meal_obj.chef.id == chef_id:
                         cart_item = cart_item_set.filter(meal=meal_obj)
+                        # Check if new cart item already excite.
                         if not cart_item:
                             return create_cart_item(cart[0], meal_obj, request)
                         return update_cart_item(cart_item[0], cart[0], meal_obj, request)
@@ -91,6 +102,7 @@ class CartView(APIView):
         cart = Cart.objects.filter(customer=user, state="opened")
         if cart:
             cart_items = CartItem.objects.filter(cart=cart[0])
+            # Get the total price of cart items.
             sub_total = cart_items.aggregate(
                 total=Sum(ExpressionWrapper(F('meal__price') * F('count'), output_field=DecimalField())))['total']
             cart_items_data = CartMealSerializer(cart[0]).data
