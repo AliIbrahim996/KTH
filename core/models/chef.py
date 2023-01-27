@@ -22,6 +22,7 @@ class Chef(models.Model):
     )
     id_card = models.ImageField(upload_to="images/")
     heart_number = models.IntegerField(default=0)
+    delivery_cost = models.IntegerField(default=0)
     description = models.TextField(max_length=255, null=True)
     bio = models.TextField(max_length=150, null=True)
     is_online = models.BooleanField(default=False)

@@ -68,6 +68,7 @@ class ChefListSerializer(serializers.ModelSerializer):
             "loc_lan",
             "profile_img",
             "heart_number",
+            "delivery_cost",
             "meals_set",
             "followers",
             "is_followed",
