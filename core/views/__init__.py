@@ -4,6 +4,7 @@ from .category_views import CategoryView, ChefCategoryView
 from .chef_views import ChefView, BestChefsView
 from .subscriptionViews import CustomerSubscribeChefView
 from .searchViews import SearchView
+from .customer_views import ResetPasswordView, SendCodeView, VerifyCodeView
 from .cart_views import CartView
 from .wishlist_view import WishListAPIView
 
@@ -23,6 +24,9 @@ __all__ = [
     "BestChefsView",
     "CustomerSubscribeChefView",
     "SearchView",
+    "ResetPasswordView",
+    "SendCodeView",
+    "VerifyCodeView"
     "CartView",
     "WishListAPIView",
 ]

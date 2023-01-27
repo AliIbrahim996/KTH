@@ -88,12 +88,15 @@ class CartView(APIView):
             sub_total = cart_items.aggregate(
                 total=Sum(ExpressionWrapper(F('meal__price') * F('count'), output_field=DecimalField())))['total']
             cart_items_data = CartMealSerializer(cart[0]).data
-            delivery_cost = cart_items.first().meal.chef.delivery_cost
+            if cart_items.first():
+                delivery_cost = cart_items.first().meal.chef.delivery_cost
+            else:
+                delivery_cost = 0
             return Response({
                 "cart_items": cart_items_data,
-                "sub_total": sub_total,
+                "sub_total": sub_total if sub_total else 0,
                 "delivery_cost": delivery_cost,
-                "total": sub_total + delivery_cost
+                "total":  sub_total + delivery_cost if sub_total else delivery_cost
             }, status=status.HTTP_200_OK)
         return Response({"msg": "No cart found!"}, status=status.HTTP_404_NOT_FOUND)
 
