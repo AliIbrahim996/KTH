@@ -4,7 +4,7 @@ from rest_framework.schemas import get_schema_view
 from .views import (RegistrationView, LoginView, LogoutView, ChangePasswordView, \
                     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView,
                     ChefMealsByCategoryView, \
-                    ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView)
+                    ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView, ResetPasswordView, SendCodeView, VerifyCodeView)
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -14,7 +14,10 @@ urlpatterns = [
     path("user/signup", RegistrationView.as_view(), name="register"),
     path("user/login", LoginView.as_view(), name="register"),
     path("user/logout", LogoutView.as_view(), name="register"),
-    path("user/resetPassword", ChangePasswordView.as_view(), name="register"),
+    path("user/changePassword", ChangePasswordView.as_view(), name="register"),
+    path("user/resetPassword", ResetPasswordView.as_view(), name="register"),
+    path("user/sendCode", SendCodeView.as_view(), name="register"),
+    path("user/verifyCode", VerifyCodeView.as_view(), name="register"),
     path("chef/", ChefView.as_view(), name="chefs"),
     path("chef/<int:chef_id>/", ChefView.as_view(), name="chefs"),
     path("chef/<int:chef_id>/category/", ChefCategoryView.as_view({'get': 'list'}), name="chefs category"),
