@@ -5,11 +5,8 @@ from .chef_views import ChefView, BestChefsView
 from .subscriptionViews import CustomerSubscribeChefView
 from .searchViews import SearchView
 from .cart_views import CartView
-<<<<<<< HEAD
 from .StripeViews import StripeViews
-=======
 from .wishlist_view import WishListAPIView
->>>>>>> remotes/origin/master
 
 __all__ = [
     "RegistrationView",
