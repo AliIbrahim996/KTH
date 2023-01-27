@@ -5,7 +5,8 @@ from .views import (RegistrationView, LoginView, LogoutView, ChangePasswordView,
                     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView,
                     ChefMealsByCategoryView, \
                     ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView,
-                    MealView, ResetPasswordView, SendCodeView, VerifyCodeView, LocationView, UserLocationView)
+                    MealView, ResetPasswordView, SendCodeView, VerifyCodeView, LocationView,
+                    UserLocationView, UpdateProfileView)
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -47,6 +48,7 @@ urlpatterns = [
                                                     'patch': 'partial_update',
                                                     'delete': 'destroy'})),
     path("customer/Location", UserLocationView.as_view({'get': 'list'})),
+    path("customer/Profile/<int:pk>", UpdateProfileView.as_view({'patch': 'partial_update', 'put': 'update', 'get': 'retrieve'})),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.

@@ -1,4 +1,5 @@
-from .customer_views import RegistrationView, LoginView, LogoutView, ChangePasswordView, ResetPasswordView, SendCodeView, VerifyCodeView
+from .customer_views import RegistrationView, LoginView, LogoutView, ChangePasswordView, ResetPasswordView, \
+    SendCodeView, VerifyCodeView, UpdateProfileView
 from .meal_views import MealsByCategoryView, ChefMealsByCategoryView, MealsByChefView, MealsViewSet, MealView
 from .category_views import CategoryView, ChefCategoryView
 from .chef_views import ChefView, BestChefsView
@@ -31,4 +32,5 @@ __all__ = [
     "WishListAPIView",
     "LocationView",
     "UserLocationView",
+    "UpdateProfileView",
 ]

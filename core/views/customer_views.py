@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from core.models import Documents, VerificationCode, Chef
+from rest_framework import viewsets
 
 from core.serializer import (
     PasswordChangeSerializer,
     ChefRegistrationSerializer,
     RegistrationSerializer,
     CustomerSerializer,
+    ChefListSerializer,
 )
 from rest_framework import permissions
 from core.models import User
@@ -102,6 +104,7 @@ class LoginView(APIView):
                     user_data = CustomerSerializer(user)
                     if Chef.objects.get(user=user):
                         is_chef = True
+                        user_data = ChefListSerializer(Chef.objects.get(user=user))
                     else:
                         is_chef = False
 
@@ -191,3 +194,16 @@ class SendCodeView(APIView):
             {"msg": "missing or invalid phone number!"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class UpdateProfileView(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CustomerSerializer
+
+    def partial_update(self, request, *args, **kwargs):
+        res = super().partial_update(request, *args, **kwargs)
+        res.data.update({"msg": "User is updated!"})
+
+    def update(self, request, *args, **kwargs):
+        res = super().update(request, *args, **kwargs)
+        res.data.update({"msg": "User is updated!"})
