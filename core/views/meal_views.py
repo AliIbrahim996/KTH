@@ -73,12 +73,18 @@ class ChefMealsByCategoryView(MealsByCategoryView):
 class MealView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ChefMealSerializer
-    queryset = Meal.objects.all()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         if self.request:
-            context.update({"chef": self.request.user.id})
+            context.update({"chef_id": self.request.user.id})
+        return context
+
+    def get_queryset(self):
+
+        if 'pk' in self.kwargs:
+            return Meal.objects.filter(pk=self.kwargs['pk'])
+        return Meal.objects.none()
 
     def create(self, request, *args, **kwargs):
         res = super().create(request, *args, **kwargs)
@@ -90,30 +96,3 @@ class MealView(viewsets.ModelViewSet):
         res = super().partial_update(request, *args, **kwargs)
         res.data.update({"msg": "Meal {} is updated!".format(instance.title)})
         return res
-
-    # def get(self, request, pk=None):
-    #     chef = getattr(request, "user", None)
-    #     if chef is not None:
-    #         if pk:
-    #             meals = get_object_or_404(Meal.objects.all(), pk=pk)
-    #             meal_serializer = ListMealSerializer(meals)
-    #             return Response(meal_serializer.data)
-    #
-    #         meals = Meal.objects.filter(chef=chef)
-    #         if meals:
-    #             meal_serializer = ListMealSerializer(meals, many=True)
-    #             return Response(meal_serializer.data, status=status.HTTP_200_OK)
-    #         else:
-    #             return Response({"msg": "You don't have any meals"}, status=status.HTTP_204_NO_CONTENT)
-    #
-    #     return Response({"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    # def put(self, request, pk):
-    #     saved_meal = get_object_or_404(Meal.objects.all(), pk=pk)
-    #     data = request.data.get('meal')
-    #     serializer = ChefMealSerializer(instance=saved_meal, data=data, partial=True)
-    #
-    #     if serializer.is_valid():
-    #         meal = serializer.save()
-    #         return Response({"msg": "meal '{}' updated successfully".format(meal.title)}, status=status.HTTP_200_OK)
-    #     return Response({"msg": "{}".format(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)

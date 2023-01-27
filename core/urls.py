@@ -24,7 +24,7 @@ urlpatterns = [
     path("chef/<int:chef_id>/category/", ChefCategoryView.as_view({'get': 'list'}), name="chefs category"),
     path("chef/<int:chef_id>/category/<int:cat_id>/meals/", ChefMealsByCategoryView.as_view({'get': 'list'}),
          name="chefs Meals by category"),
-    path("chef/meal", MealView.as_view({'get': 'retrieve', 'post': 'create', 'put': 'update',
+    path("chef/meal/<int:pk>", MealView.as_view({'get': 'retrieve', 'post': 'create', 'put': 'update',
                                         'patch': 'partial_update',
                                         'delete': 'destroy'})),
     path("chef/best", BestChefsView.as_view(), name="best chefs"),

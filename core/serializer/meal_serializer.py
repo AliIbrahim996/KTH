@@ -9,14 +9,14 @@ class ChefMealSerializer(serializers.ModelSerializer):
     chef = ChefListSerializer
 
     def __init__(self, *args, **kwargs):
-        chef = Chef.objects.get(user__id=self.context.get("chef"))
-        self.chef = ChefListSerializer(chef, many=True)
         super().__init__(*args, **kwargs)
+        chef = Chef.objects.get(user__id=self.context.get("chef_id"))
+        self.chef = ChefListSerializer(chef)
 
     class Meta:
         model = Meal
         fields = [
-            "chef"
+            "chef",
             "title",
             "description",
             "price",
@@ -24,12 +24,14 @@ class ChefMealSerializer(serializers.ModelSerializer):
             "dishes_count",
             "is_deleted",
             "category",
-            "delivery_time"
+            "delivery_time",
+            "additives",
+            "allergens",
         ]
 
     def create(self, validated_data):
         meal = Meal.objects.create(
-            chef=self.chef.data,
+            chef=self.chef.instance,
             title=validated_data["title"],
             description=validated_data["description"],
             price=validated_data["price"],
@@ -43,7 +45,7 @@ class ChefMealSerializer(serializers.ModelSerializer):
 
 
 class ListMealSerializer(serializers.ModelSerializer):
-    chef = ChefListSerializer(many=True)
+    chef = ChefListSerializer
     category = serializers.StringRelatedField()
     rate = serializers.SerializerMethodField('get_avg_rating')
     is_liked = serializers.SerializerMethodField('get_is_liked')
