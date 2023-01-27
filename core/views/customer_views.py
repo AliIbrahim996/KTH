@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from core.models import Documents, VerificationCode
+from core.models import Documents, VerificationCode, Chef
 
 from core.serializer import (
     PasswordChangeSerializer,
@@ -100,7 +100,13 @@ class LoginView(APIView):
                     token, _ = Token.objects.get_or_create(user=user)
                     login(request, user)
                     user_data = CustomerSerializer(user)
-                    return Response({"msg": "Login Success", "token": token.key, "user": user_data.data},
+                    if Chef.objects.get(user=user):
+                        is_chef = True
+                    else:
+                        is_chef = False
+
+                    return Response({"msg": "Login Success", "token": token.key, "user": user_data.data,
+                                     "role": 2 if is_chef else 1},
                                     status=status.HTTP_200_OK)
                 return Response(
                     {"msg": "Invalid Credentials"}, status=status.HTTP_401_UNAUTHORIZED
