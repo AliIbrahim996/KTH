@@ -4,8 +4,8 @@ from rest_framework.schemas import get_schema_view
 from .views import (RegistrationView, LoginView, LogoutView, ChangePasswordView, \
                     ChefView, BestChefsView, CategoryView, MealsViewSet, MealsByCategoryView, MealsByChefView,
                     ChefMealsByCategoryView, \
-                    ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView, 
-                    MealView, ResetPasswordView, SendCodeView, VerifyCodeView)
+                    ChefCategoryView, CustomerSubscribeChefView, SearchView, CartView, WishListAPIView,
+                    MealView, ResetPasswordView, SendCodeView, VerifyCodeView, LocationView, UserLocationView)
 
 from .views.swagger_ui import SwaggerUITemplateView
 
@@ -25,8 +25,8 @@ urlpatterns = [
     path("chef/<int:chef_id>/category/<int:cat_id>/meals/", ChefMealsByCategoryView.as_view({'get': 'list'}),
          name="chefs Meals by category"),
     path("chef/meal/<int:pk>", MealView.as_view({'get': 'retrieve', 'post': 'create', 'put': 'update',
-                                        'patch': 'partial_update',
-                                        'delete': 'destroy'})),
+                                                 'patch': 'partial_update',
+                                                 'delete': 'destroy'})),
     path("chef/best", BestChefsView.as_view(), name="best chefs"),
     path("category", CategoryView.as_view({'get': 'list'}), name="category"),
     path("category/<int:cat_id>/meals/", MealsByCategoryView.as_view({'get': 'list'}), name="Meals by category"),
@@ -43,6 +43,10 @@ urlpatterns = [
     path("customer/cart", CartView.as_view(), name="Cart endpoints"),
     path("wishlist/<int:meal_id>/", WishListAPIView.as_view(), name="Remove from wishlist"),
     path("wishlist/", WishListAPIView.as_view(), name="Add and list wishlist"),
+    path("Location/<int:pk>", LocationView.as_view({'get': 'retrieve', 'post': 'create', 'put': 'update',
+                                                    'patch': 'partial_update',
+                                                    'delete': 'destroy'})),
+    path("customer/Location", UserLocationView.as_view({'get': 'list'})),
 
     # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
     #   * `title` and `description` parameters are passed to `SchemaGenerator`.

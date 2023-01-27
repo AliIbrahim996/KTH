@@ -13,6 +13,7 @@ from .cart import Cart
 from .cartItem import CartItem
 from .meals_rate import MealsRating
 from .wishlist import WishList
+from .Location import Location
 
 __all__ = [
     'Chef',
@@ -31,4 +32,5 @@ __all__ = [
     'CartItem',
     'MealsRating',
     'WishList',
+    'Location',
 ]

@@ -1,9 +1,6 @@
-from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
-from rest_framework import status
 from rest_framework import permissions
-from core.models import Meal, Category, Chef, User
+from core.models import Meal, Category, Chef
 from core.serializer import ListMealSerializer, ChefMealSerializer
 
 

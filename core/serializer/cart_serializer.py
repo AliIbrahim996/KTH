@@ -54,6 +54,8 @@ class CartItemMealSerializer(serializers.ModelSerializer):
             "id",
             "count",
             "meal",
+            "is_scheduled",
+            "order_date",
         ]
 
 

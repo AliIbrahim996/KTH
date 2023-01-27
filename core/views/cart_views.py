@@ -10,6 +10,12 @@ from core.serializer import CartSerializer, CartItemSerializer, CartMealSerializ
 def create_cart_item(cart, meal, request):
     cart_item_serializer = CartItemSerializer(cart=cart, meal=meal, data=request.data)
     if cart_item_serializer.is_valid():
+        is_scheduled = request.data["is_scheduled"]
+        cart_item = cart_item_serializer.instance
+        cart_item.is_scheduled = is_scheduled
+        if is_scheduled:
+            is_scheduled.order_date = request.data["order_date"]
+        cart_item.save()
         cart_item_serializer.save()
         return Response(
             {"msg": "Item added to cart!"}, status=status.HTTP_201_CREATED
@@ -23,7 +29,7 @@ def update_cart_item(cart_item, cart, meal_obj, request):
                                               meal=meal_obj, cart=cart)
     if cart_item_serializer.is_valid():
         cart_item_serializer.save()
-        return Response({"msg": "cart updated"},
+        return Response({"msg": "Item count updated!"},
                         status=status.HTTP_200_OK)
     return Response({"msg": "{}".format(cart_item_serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
 
