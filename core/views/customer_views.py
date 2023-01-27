@@ -54,8 +54,8 @@ class RegistrationView(APIView):
                     token, _ = Token.objects.get_or_create(user=chef_obj)
                     for doc in documents_set:
                         doc_obj = Documents.objects.create(chef=chef_obj, img=doc)
-                    code, message = send_verification_code(user_obj.phone_number)
-                    if message.error_code == 'None':
+                    code, message = send_verification_code(request.data["phone_number"])
+                    if message.error_code is None:
                         chef_obj.user.is_active = False
                         chef_obj.user.save()
                         verification_code = VerificationCode.objects.create(code=code, user=chef_obj.user)
@@ -63,8 +63,8 @@ class RegistrationView(APIView):
                             {"msg": "New chef is created!", "token": token.key}, status=status.HTTP_201_CREATED
                         )
                 return Response(chef_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            code, message = send_verification_code(user_obj.phone_number)
-            if message.error_code == 'None':
+            code, message = send_verification_code(request.data["phone_number"])
+            if message.error_code is None:
                 user_obj.is_active = False
                 user_obj.save()
                 user_serializer.save()
@@ -119,6 +119,10 @@ class LogoutView(APIView):
 
 
 class ResetPasswordView(APIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+
     def post(self, request):
         if request.data["phone_number"] and request.data["new_password"]:
             user = User.objects.filter(phone_number=request.data["phone_number"])
@@ -144,6 +148,9 @@ class ChangePasswordView(ResetPasswordView):
 
 
 class VerifyCodeView(APIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
 
     def post(self, request):
         if request.data["phone_number"] and request.data["verification_code"]:
@@ -158,15 +165,21 @@ class VerifyCodeView(APIView):
 
 
 class SendCodeView(APIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
 
     def post(self, request):
         if request.data["phone_number"]:
             if User.objects.get(phone_number=request.data["phone_number"]).exists():
-                code = send_verification_code(request.data["phone_number"])
-                verification_code = VerificationCode.objects.create(code=code, user=User.objects.get(
-                    phone_number=request.data["phone_number"]))
-                msg = "VerificationCode is sent! code {}".format(verification_code)
-                return Response({"msg": msg}, status=status.HTTP_200_OK)
+                code, message = send_verification_code(request.data["phone_number"])
+                if message.error_code is None:
+                    verification_code = VerificationCode.objects.create(code=code, user=User.objects.get(
+                        phone_number=request.data["phone_number"]))
+                    msg = "VerificationCode is sent! code {}".format(verification_code)
+                    return Response({"msg": msg}, status=status.HTTP_200_OK)
+                return Response({"msg": message.error_message + ", error code: " + message.error_code},
+                                status=status.HTTP_400_BAD_REQUEST)
             return Response({"msg": "The user dose not exists!"}, status=status.HTTP_404_NOT_FOUND)
         return Response(
             {"msg": "missing or invalid phone number!"},
