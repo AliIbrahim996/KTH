@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.views import APIView
-from core.models import Cart, CartItem
+from core.models import (Cart, CartItem, Order, SubOrder, Chef)
 import stripe
 
 from django.conf import settings
@@ -67,8 +67,34 @@ class StripeFulfilViews(APIView):
             cart_id = event['data']['object']['metadata']['cart_id']
             cart = Cart.objects.get(cart_id)
             cart_items = CartItem.objects.filter(cart_id=cart_id)
-            # Set cart to closed.
-            print("New order is created!")
-            return Response("New order is created!", status=status.HTTP_201_CREATED)
+            chef_id = cart_items[0].meal.chef.id
+            # Create new order
+            order = Order.objects.create(chef_id=chef_id, customer=cart.customer.id)
+            try:
+                scheduled_items_price = non_scheduled_items_price = Chef.objects.get(pk=chef_id).delivery_cost
+                scheduled_orders = SubOrder.objects.create(state=SubOrder.OrderStates.SCHEDULED, order=order)
+                non_scheduled_orders = SubOrder.objects.create(state=SubOrder.OrderStates.PENDING, order=order)
+
+                # Combine Scheduled items into one subOrder.
+                for cart_item in cart_items:
+                    if cart_item.is_scheduled:
+                        scheduled_orders.cart_items.add(cart_item)
+                        scheduled_items_price += cart_item.count * cart_item.meal.price
+                # Combine non-Scheduled items into one subOrder.
+                    else:
+                        non_scheduled_orders.cart_items.add(cart_item)
+                        non_scheduled_items_price += cart_item.count * cart_item.meal.price
+
+                scheduled_orders.total_price = scheduled_items_price
+                non_scheduled_orders.total_price = non_scheduled_items_price
+                scheduled_orders.save()
+                non_scheduled_orders.save()
+                # Set cart to closed.
+                cart.CartStates = Cart.CartStates.CLOSED
+                cart.save()
+                print("New order is created!")
+                return Response("New order is created!", status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response("Error! " + str(e), status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response("Unhandled event type!", status=status.HTTP_400_BAD_REQUEST)
