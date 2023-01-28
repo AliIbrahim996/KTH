@@ -27,7 +27,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "password2",
             "phone_number",
             "email",
-            "profile_img",
         ]
         extra_kwargs = {
             "full_name": {"required": True},
@@ -48,7 +47,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=validated_data["email"],
             full_name=validated_data["full_name"],
             password=validated_data["password"],
-            profile_img=validated_data["profile_img"],
         )
         return user
 

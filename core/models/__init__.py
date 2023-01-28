@@ -8,10 +8,12 @@ from .Subscription import Subscription
 from .category import Category
 from .complaint import Complaint
 from .OrderedMeals import OrderedMeals
+from .verification_code import VerificationCode
 from .cart import Cart
 from .cartItem import CartItem
 from .meals_rate import MealsRating
 from .wishlist import WishList
+from .Location import Location
 
 __all__ = [
     'Chef',
@@ -25,8 +27,10 @@ __all__ = [
     'Address',
     'Subscription',
     'Complaint',
+    'VerificationCode',
     'Cart',
     'CartItem',
     'MealsRating',
     'WishList',
+    'Location',
 ]
