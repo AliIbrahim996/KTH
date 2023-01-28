@@ -15,6 +15,9 @@ from core.models import (
     Cart,
     CartItem,
     MealsRating,
+    SubOrder,
+    Location,
+    WishList,
 )
 
 admin.site.register(Address)
@@ -30,3 +33,6 @@ admin.site.register(Category)
 admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(MealsRating)
+admin.site.register(SubOrder)
+admin.site.register(Location)
+admin.site.register(WishList)

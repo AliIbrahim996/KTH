@@ -36,7 +36,7 @@ class StripeViews(APIView):
                     payment_method_types=['card'],
                     mode='payment',
                     metadata={'customer_id': request.user.id, "cart_id": cart_id},
-                    success_url="http://127.0.0.1:8000/core/customer/payment/fulfil",
+                    success_url="https://aliaji72.pythonanywhere.com/core/customer/payment/fulfil",
                     cancel_url="http://127.0.0.1:8000/core/customer/payment/cancelled", )
 
                 return Response("URL: " + checkout_session.url, status=status.HTTP_200_OK)
