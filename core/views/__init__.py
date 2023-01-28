@@ -6,8 +6,10 @@ from .chef_views import ChefView, BestChefsView
 from .subscriptionViews import CustomerSubscribeChefView
 from .searchViews import SearchView
 from .cart_views import CartView
+from .StripeViews import StripeViews, StripeFulfilViews
 from .wishlist_view import WishListAPIView
 from .location_views import LocationView, UserLocationView
+from .OrderViews import OrderDetailsView
 
 __all__ = [
     "RegistrationView",
@@ -29,8 +31,11 @@ __all__ = [
     "SendCodeView",
     "VerifyCodeView",
     "CartView",
+    "StripeViews",
     "WishListAPIView",
+    "StripeFulfilViews",
     "LocationView",
     "UserLocationView",
     "UpdateProfileView",
+    "OrderDetailsView",
 ]

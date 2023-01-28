@@ -7,6 +7,7 @@ from .cart_serializer import CartSerializer, CartItemSerializer, CartMealSeriali
 from .wishlist_serializer import WishListSerializer
 from .CustomerSerializer import CustomerSerializer
 from .location_serializer import LocationSerializer
+from .OrderSerializer import OrderSerializer
 
 __all__ = [
     "RegistrationSerializer",
@@ -25,4 +26,5 @@ __all__ = [
     "WishListSerializer",
     "CustomerSerializer",
     "LocationSerializer",
+    "OrderSerializer",
 ]
