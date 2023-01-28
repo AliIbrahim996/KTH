@@ -17,7 +17,8 @@ class CustomerSubscribeChefView(viewsets.ModelViewSet):
     def get_serializer_context(self):
         context = super(CustomerSubscribeChefView, self).get_serializer_context()
         context.update({"customer": self.request.user.id})
-        context.update({"chef": self.kwargs['chef_id']})
+        if 'chef_id' in self.kwargs:
+            context.update({"chef": self.kwargs['chef_id']})
         return context
 
     def list(self, request, *args, **kwargs):

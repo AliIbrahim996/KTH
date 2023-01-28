@@ -5,6 +5,15 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from stripe import Customer
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def _on_update_user(sender, instance=None, created=False, **kwargs):
+    if created:
+        Customer.create(api_key=settings.STRIPE_SECRET_KEY, email=instance.email, name=instance.full_name,
+                        metadata={'user_id': instance.pk, 'username': instance.username},
+                        description='Created from Django!')
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -45,7 +54,6 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractUser, PermissionsMixin):
-
     full_name = models.CharField(max_length=50, null=False, blank=False)
     phone_number = PhoneNumberField(max_length=25, null=False, blank=False, unique=True)
     profile_img = models.ImageField(upload_to="images/profile/", null=True)

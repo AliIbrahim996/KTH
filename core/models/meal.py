@@ -8,7 +8,7 @@ class Meal(models.Model):
     chef = models.ForeignKey(Chef, on_delete=models.CASCADE, related_name="meals_set")
     title = models.CharField(max_length=150, null=False, blank=False)
     description = models.CharField(max_length=250, null=False, blank=False)
-    price = models.FloatField()
+    price = models.FloatField(default=0.0)
     image = models.ImageField(upload_to="images/")
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     dishes_count = models.IntegerField(default=0)
@@ -17,6 +17,9 @@ class Meal(models.Model):
     pre_order = models.BooleanField(default=False)
     pickup = models.BooleanField(default=False)
     delivery = models.BooleanField(default=False)
+    delivery_time = models.DateTimeField(null=True)
+    additives = models.TextField(null=True)
+    allergens = models.TextField(null=True)
 
     def __str__(self):
         return self.title

@@ -1,8 +1,4 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
-from rest_framework import status
 from rest_framework import permissions
 from core.models import Meal, Category, Chef
 from core.serializer import ListMealSerializer, ChefMealSerializer
@@ -58,6 +54,7 @@ class MealsViewSet(viewsets.ReadOnlyModelViewSet):
         context.update({"user_id": self.request.user.id})
         return context
 
+
 class ChefMealsByCategoryView(MealsByCategoryView):
     def get_queryset(self):
         category_id = self.kwargs['cat_id']
@@ -70,46 +67,29 @@ class ChefMealsByCategoryView(MealsByCategoryView):
         return queryset
 
 
-class MealView(APIView):
+class MealView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = ChefMealSerializer
 
-    def post(self, request):
-        chef = getattr(request, "user", None)
-        if chef is not None:
-            meal_serializer = ChefMealSerializer(chef=chef, data=request.data)
-            if meal_serializer.is_valid():
-                meal_serializer.save()
-                return Response(
-                    {"msg": "New Meal is created!"}, status=status.HTTP_201_CREATED
-                )
-            return Response(meal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(
-            {"msg": "Missing user attribute!"}, status=status.HTTP_400_BAD_REQUEST
-        )
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if self.request:
+            context.update({"chef_id": self.request.user.id})
+        return context
 
-    def get(self, request, pk=None):
-        chef = getattr(request, "user", None)
-        if chef is not None:
-            if pk:
-                meals = get_object_or_404(Meal.objects.all(), pk=pk)
-                meal_serializer = ListMealSerializer(meals)
-                return Response(meal_serializer.data)
+    def get_queryset(self):
 
-            meals = Meal.objects.filter(chef=chef)
-            if meals:
-                meal_serializer = ListMealSerializer(meals, many=True)
-                return Response(meal_serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({"msg": "You don't have any meals"}, status=status.HTTP_204_NO_CONTENT)
+        if 'pk' in self.kwargs:
+            return Meal.objects.filter(pk=self.kwargs['pk'])
+        return Meal.objects.none()
 
-        return Response({"msg": "User is unauthorized"}, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        res = super().create(request, *args, **kwargs)
+        res.data.update({"msg": "New meal is created!"})
+        return res
 
-    def put(self, request, pk):
-        saved_meal = get_object_or_404(Meal.objects.all(), pk=pk)
-        data = request.data.get('meal')
-        serializer = ChefMealSerializer(instance=saved_meal, data=data, partial=True)
-
-        if serializer.is_valid():
-            meal = serializer.save()
-            return Response({"msg": "meal '{}' updated successfully".format(meal.title)}, status=status.HTTP_200_OK)
-        return Response({"msg": "{}".format(serializer.errors)}, status=status.HTTP_400_BAD_REQUEST)
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        res = super().partial_update(request, *args, **kwargs)
+        res.data.update({"msg": "Meal {} is updated!".format(instance.title)})
+        return res

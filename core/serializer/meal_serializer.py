@@ -2,18 +2,21 @@ from django.db.models import Avg
 from rest_framework import serializers
 from core.models import Meal, Chef, WishList
 from core.models.meals_rate import MealsRating
+from core.serializer import ChefListSerializer
 
 
 class ChefMealSerializer(serializers.ModelSerializer):
-    chef = Chef()
+    chef = ChefListSerializer
 
-    def __init__(self, chef, instance=None, data=..., **kwargs):
-        self.chef = chef
-        super().__init__(instance, data, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        chef = Chef.objects.get(user__id=self.context.get("chef_id"))
+        self.chef = ChefListSerializer(chef)
 
     class Meta:
         model = Meal
         fields = [
+            "chef",
             "title",
             "description",
             "price",
@@ -21,11 +24,14 @@ class ChefMealSerializer(serializers.ModelSerializer):
             "dishes_count",
             "is_deleted",
             "category",
+            "delivery_time",
+            "additives",
+            "allergens",
         ]
 
     def create(self, validated_data):
         meal = Meal.objects.create(
-            chef=self.chef,
+            chef=self.chef.instance,
             title=validated_data["title"],
             description=validated_data["description"],
             price=validated_data["price"],
@@ -33,23 +39,13 @@ class ChefMealSerializer(serializers.ModelSerializer):
             dishes_count=validated_data["dishes_count"],
             category=validated_data["category"],
             is_deleted=validated_data["is_deleted"],
+            delivery_time=validated_data["delivery_time"],
         )
         return meal
 
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.description = validated_data.get('description', instance.description)
-        instance.price = validated_data.get('price', instance.price)
-        instance.image = validated_data.get('author_id', instance.image)
-        instance.dishes_count = validated_data.get('author_id', instance.dishes_count)
-        instance.is_deleted = validated_data.get('author_id', instance.is_deleted)
-
-        instance.save()
-        return
-
 
 class ListMealSerializer(serializers.ModelSerializer):
-    chef = serializers.StringRelatedField()
+    chef = ChefListSerializer
     category = serializers.StringRelatedField()
     rate = serializers.SerializerMethodField('get_avg_rating')
     is_liked = serializers.SerializerMethodField('get_is_liked')
@@ -71,6 +67,9 @@ class ListMealSerializer(serializers.ModelSerializer):
             "pickup",
             "delivery",
             "is_liked",
+            "delivery_time",
+            "additives",
+            "allergens",
         ]
 
     def get_avg_rating(self, meal):
