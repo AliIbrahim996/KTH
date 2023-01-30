@@ -12,7 +12,7 @@ from stripe import Customer
 def _on_update_user(sender, instance=None, created=False, **kwargs):
     if created:
         Customer.create(api_key=settings.STRIPE_SECRET_KEY, email=instance.email, name=instance.full_name,
-                        metadata={'user_id': instance.pk, 'username': instance.username},
+                        metadata={'user_id': instance.pk, 'phone_number': instance.phone_number},
                         description='Created from Django!')
 
 
@@ -54,6 +54,9 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractUser, PermissionsMixin):
+    user_name = None
+    first_name = None
+    last_name = None
     full_name = models.CharField(max_length=50, null=False, blank=False)
     phone_number = PhoneNumberField(max_length=25, null=False, blank=False, unique=True)
     profile_img = models.ImageField(upload_to="images/profile/", null=True)
