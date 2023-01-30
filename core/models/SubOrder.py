@@ -18,4 +18,4 @@ class SubOrder(models.Model):
         default=OrderStates.PENDING
     )
     total_price = models.FloatField(default=0)
-    cart_items = models.ManyToManyField(CartItem)
+    cart_items = models.ManyToManyField(CartItem, related_name="order_item_set")

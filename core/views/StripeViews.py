@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.views import APIView
-from core.models import (Cart, CartItem, Order, SubOrder, Chef)
+from core.models import (Cart, CartItem, Order, SubOrder, Chef, Location)
 import stripe
 
 from django.conf import settings
@@ -14,7 +14,8 @@ class StripeViews(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        if request.data["cart_id"]:
+        if request.data["cart_id"] and request.data["loc_id"]:
+            loc_id  = request.data["loc_id"]
             cart_id = request.data["cart_id"]
             try:
                 cart_items = CartItem.objects.filter(cart_id=cart_id)
@@ -35,13 +36,15 @@ class StripeViews(APIView):
                     payment_intent_data={"setup_future_usage": "off_session"},
                     payment_method_types=['card'],
                     mode='payment',
-                    metadata={'customer_id': request.user.id, "cart_id": cart_id},
+                    metadata={'customer_id': request.user.id, "cart_id": cart_id, "loc_id": loc_id },
                     success_url="https://aliaji72.pythonanywhere.com/core/customer/payment/fulfil",
                     cancel_url="http://127.0.0.1:8000/core/customer/payment/cancelled", )
 
                 return Response("URL: " + checkout_session.url, status=status.HTTP_200_OK)
             except Exception as e:
                 return Response("Error: " + str(e), status=status.HTTP_400_BAD_REQUEST)
+        else:
+         return Response({"msg: missing cart_id or loc_id check your request body!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StripeFulfilViews(APIView):
@@ -65,11 +68,13 @@ class StripeFulfilViews(APIView):
         if event['type'] == 'checkout.session.completed':
             # Create order
             cart_id = event['data']['object']['metadata']['cart_id']
+            loc_id = event['data']['object']['metadata']['loc_id']
             cart = Cart.objects.get(cart_id)
+            location = Location.objects.get(loc_id)
             cart_items = CartItem.objects.filter(cart_id=cart_id)
             chef_id = cart_items[0].meal.chef.id
             # Create new order
-            order = Order.objects.create(chef_id=chef_id, customer=cart.customer.id)
+            order = Order.objects.create(chef_id=chef_id, customer=cart.customer.id, location=location)
             try:
                 scheduled_items_price = non_scheduled_items_price = Chef.objects.get(pk=chef_id).delivery_cost
                 scheduled_orders = SubOrder.objects.create(state=SubOrder.OrderStates.SCHEDULED, order=order)

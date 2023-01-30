@@ -9,3 +9,4 @@ class CartItem(models.Model):
     count = models.IntegerField(default=1)
     is_scheduled = models.BooleanField(default=False)
     order_date = models.DateTimeField(null=True)
+    comment = models.TextField(null=True)

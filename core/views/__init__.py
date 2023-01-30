@@ -1,6 +1,6 @@
 from .customer_views import RegistrationView, LoginView, LogoutView, ChangePasswordView, ResetPasswordView, \
     SendCodeView, VerifyCodeView, UpdateProfileView
-from .meal_views import MealsByCategoryView, ChefMealsByCategoryView, MealsByChefView, MealsViewSet, MealView
+from .meal_views import TrendingMealsViewSet, MealsByCategoryView, ChefMealsByCategoryView, MealsByChefView, MealsViewSet, MealView
 from .category_views import CategoryView, ChefCategoryView
 from .chef_views import ChefView, BestChefsView
 from .subscriptionViews import CustomerSubscribeChefView
@@ -10,6 +10,7 @@ from .StripeViews import StripeViews, StripeFulfilViews
 from .wishlist_view import WishListAPIView
 from .location_views import LocationView, UserLocationView
 from .OrderViews import OrderDetailsView
+from .OrderRateView import OrderRateView
 
 __all__ = [
     "RegistrationView",
@@ -38,4 +39,6 @@ __all__ = [
     "UserLocationView",
     "UpdateProfileView",
     "OrderDetailsView",
+    "TrendingMealsViewSet",
+    "OrderRateView",
 ]

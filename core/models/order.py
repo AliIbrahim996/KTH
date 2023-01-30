@@ -9,6 +9,4 @@ class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered_date = models.DateTimeField(auto_now_add=True)
     review = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return self.id
+    location = models.ForeignKey("Location", null=True, on_delete=models.CASCADE)

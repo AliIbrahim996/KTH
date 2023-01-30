@@ -8,6 +8,8 @@ from .wishlist_serializer import WishListSerializer
 from .CustomerSerializer import CustomerSerializer
 from .location_serializer import LocationSerializer
 from .OrderSerializer import OrderSerializer
+from .OrderRateSerializer import OrderRateSerializer
+
 
 __all__ = [
     "RegistrationSerializer",
@@ -27,4 +29,5 @@ __all__ = [
     "CustomerSerializer",
     "LocationSerializer",
     "OrderSerializer",
+    "OrderRateSerializer",
 ]

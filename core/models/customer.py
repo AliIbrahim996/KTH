@@ -54,7 +54,7 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractUser, PermissionsMixin):
-    user_name = None
+    username = None
     first_name = None
     last_name = None
     full_name = models.CharField(max_length=50, null=False, blank=False)

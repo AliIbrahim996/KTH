@@ -18,6 +18,7 @@ from core.models import (
     SubOrder,
     Location,
     WishList,
+    OrderRating,
 )
 
 admin.site.register(Address)
@@ -36,3 +37,4 @@ admin.site.register(MealsRating)
 admin.site.register(SubOrder)
 admin.site.register(Location)
 admin.site.register(WishList)
+admin.site.register(OrderRating)

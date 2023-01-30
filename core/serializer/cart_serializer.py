@@ -6,6 +6,7 @@ from core.serializer import ListMealSerializer
 class CartItemSerializer(serializers.ModelSerializer):
     meal = Meal()
     cart = Cart()
+    comment = serializers.CharField(required=False)
 
     def __init__(self, meal, cart, instance=None, data=..., **kwargs):
         self.meal = meal
@@ -15,7 +16,8 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = [
-            "count"
+            "count",
+            "comment"
         ]
 
     def create(self, validated_data):
@@ -23,8 +25,13 @@ class CartItemSerializer(serializers.ModelSerializer):
             cart=self.cart,
             meal=self.meal,
             count=validated_data["count"],
+            comment=validated_data["comment"]
         )
         return cart_item
+
+    def get_validation_exclusions(self):
+        exclusions = super(CartItemSerializer, self).get_validation_exclusions()
+        return exclusions + ['comment']
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -54,6 +61,7 @@ class CartItemMealSerializer(serializers.ModelSerializer):
             "id",
             "count",
             "meal",
+            "comment",
             "is_scheduled",
             "order_date",
         ]

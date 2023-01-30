@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from rest_framework import permissions
-from core.models import Meal, Category, Chef
+from core.models import Meal, Category, Chef, Order
 from core.serializer import ListMealSerializer, ChefMealSerializer
+from django.db.models import Count
 
 
 class MealsByChefView(viewsets.ReadOnlyModelViewSet):
@@ -53,6 +54,28 @@ class MealsViewSet(viewsets.ReadOnlyModelViewSet):
         context = super(MealsViewSet, self).get_serializer_context()
         context.update({"user_id": self.request.user.id})
         return context
+
+
+class TrendingMealsViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = ListMealSerializer
+
+    def get_queryset(self):
+        orders = Order.objects.all()
+        if orders.count() > 0:
+            try:
+                order_items = orders.prefetch_related("order_items"). \
+                    get().order_items.prefetch_related("order_item_set").get().cart_items.\
+                    annotate(meal_count=Count('meal'))\
+                    .filter(meal_count__gt=1).values("meal")
+                return order_items
+
+            except Exception as e:
+                print(e)
+                return Meal.objects.none()
+
+        else:
+            return Meal.objects.all()[:10]
 
 
 class ChefMealsByCategoryView(MealsByCategoryView):

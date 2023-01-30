@@ -102,9 +102,9 @@ class LoginView(APIView):
                     token, _ = Token.objects.get_or_create(user=user)
                     login(request, user)
                     user_data = CustomerSerializer(user)
-                    if Chef.objects.get(user=user):
+                    if Chef.objects.filter(user=user).exists():
                         is_chef = True
-                        user_data = ChefListSerializer(Chef.objects.get(user=user))
+                        user_data = ChefListSerializer(Chef.objects.get(user__id=user.id))
                     else:
                         is_chef = False
 

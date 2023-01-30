@@ -11,12 +11,11 @@ def create_cart_item(cart, meal, request):
     cart_item_serializer = CartItemSerializer(cart=cart, meal=meal, data=request.data)
     if cart_item_serializer.is_valid():
         is_scheduled = request.data["is_scheduled"]
-        cart_item = cart_item_serializer.instance
+        cart_item = cart_item_serializer.save()
         cart_item.is_scheduled = is_scheduled
         if is_scheduled:
-            is_scheduled.order_date = request.data["order_date"]
+            cart_item.order_date = request.data["order_date"]
         cart_item.save()
-        cart_item_serializer.save()
         return Response(
             {"msg": "Item added to cart!"}, status=status.HTTP_201_CREATED
         )

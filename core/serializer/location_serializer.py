@@ -4,20 +4,32 @@ from core.models import Location, User
 
 
 class LocationSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer
+    customer = CustomerSerializer(required=False)
+    phone_number = serializers.CharField(source='customer.phone_number',required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        customer = User.objects.get(user__id=self.context.get("user_id"))
+        customer = User.objects.get(pk=self.context.get("user_id"))
         self.customer = CustomerSerializer(customer)
 
     class Meta:
         model = Location
         fields = [
             "customer",
+            "phone_number",
             "loc_lat",
             "loc_lan",
+            "street",
+            "city",
+            "country",
+            "department_number",
+            "location_type",
         ]
+
+
+    def get_validation_exclusions(self):
+        exclusions = super(LocationSerializer, self).get_validation_exclusions()
+        return exclusions + ['customer']
 
     def create(self, validated_data):
         location = Location.objects.create(customer=self.customer.instance,

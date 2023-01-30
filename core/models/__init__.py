@@ -15,6 +15,8 @@ from .wishlist import WishList
 from .Location import Location
 from .order import Order
 from .SubOrder import SubOrder
+from .OrderRate import OrderRating
+
 
 __all__ = [
     'Chef',
@@ -35,4 +37,5 @@ __all__ = [
     'MealsRating',
     'WishList',
     'Location',
+    'OrderRating',
 ]

@@ -9,5 +9,5 @@ class OrderDetailsView(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        if 'pk' in self.kwargs:
-            return Order.objects.filter(pk=self.kwargs['pk'])
+        if self.request.user:
+            return Order.objects.filter(customer__id=self.request.user.id)
