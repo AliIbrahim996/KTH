@@ -66,4 +66,4 @@ class User(AbstractUser, PermissionsMixin):
     USERNAME_FIELD = "phone_number"
 
     def __str__(self):
-        return self.full_name
+        return f'{self.full_name if self.full_name else ""} <{self.phone_number}>'

@@ -19,7 +19,7 @@ class ChefRegistrationSerializer(serializers.ModelSerializer):
             "id_card",
         ]
         extra_kwargs = {
-            "id_card": {"required": True},
+            "id_card": {"required": False},
         }
 
     def create(self, validated_data):
@@ -28,7 +28,6 @@ class ChefRegistrationSerializer(serializers.ModelSerializer):
             user=self.user,
             loc_lat=validated_data["loc_lat"],
             loc_lan=validated_data["loc_lan"],
-            id_card=validated_data["id_card"],
         )
 
         return chef
@@ -70,6 +69,8 @@ class ChefListSerializer(serializers.ModelSerializer):
             "meals_set",
             "followers",
             "is_followed",
+            "cover_image",
+            "location",
         ]
 
     def get_followers(self, obj):

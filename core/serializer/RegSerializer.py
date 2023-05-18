@@ -25,7 +25,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "password",
             "password2",
             "phone_number",
-            "email",
         ]
         extra_kwargs = {
             "full_name": {"required": True},
@@ -41,7 +40,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create(
             phone_number=validated_data["phone_number"],
-            email=validated_data["email"],
             full_name=validated_data["full_name"],
             password=validated_data["password"],
         )

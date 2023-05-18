@@ -9,7 +9,6 @@ class CustomerSerializer(serializers.ModelSerializer):
             "id",
             "full_name",
             "phone_number",
-            "email",
             "profile_img",
             "location_set",
         ]

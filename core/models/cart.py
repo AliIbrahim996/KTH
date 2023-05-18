@@ -19,4 +19,4 @@ class Cart(models.Model):
     )
 
     def __str__(self):
-        return self.id
+        return f'{self.id}'

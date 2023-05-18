@@ -3,6 +3,7 @@ from django.db.models import Prefetch
 from core.models import Category, Chef, Meal
 from core.serializer import CategorySerializer, ChefCategorySerializer
 from rest_framework.generics import get_object_or_404
+import datetime
 
 
 class CategoryView(viewsets.ReadOnlyModelViewSet):
@@ -17,8 +18,9 @@ class ChefCategoryView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         chef_id = self.kwargs['chef_id']
+        date = self.kwargs['date']
         chef = get_object_or_404(Chef, pk=chef_id)
         categories_id = Meal.objects.filter(chef=chef).values("category")
         queryset = Category.objects.filter(id__in=categories_id)
         return queryset.prefetch_related(
-            Prefetch('meal_set', queryset=Meal.objects.filter(chef=chef)))
+            Prefetch('meal_set', queryset=Meal.objects.filter(chef=chef, delivery_time__gte=datetime.datetime.strptime(date, "%Y-%m-%d").date())))

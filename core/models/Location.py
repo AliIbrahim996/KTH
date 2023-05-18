@@ -13,3 +13,19 @@ class Location(models.Model):
     country = models.TextField(null=True)
     department_number = models.TextField(null=True)
     location_type = models.TextField(null=True)
+
+
+    def __str__(self):
+        return f'{self.id}'
+
+
+class UserLocation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="location")
+    # location on map
+    street = models.TextField(null=True)
+    city = models.TextField(null=True)
+    state = models.TextField(null=True)
+    zip_code = models.CharField(max_length=100 ,null=True)
+
+    def __str__(self):
+        return f'{self.id}'

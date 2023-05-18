@@ -19,3 +19,6 @@ class SubOrder(models.Model):
     )
     total_price = models.FloatField(default=0)
     cart_items = models.ManyToManyField(CartItem, related_name="order_item_set")
+    
+    def __str__(self):
+        return f'{self.id}'

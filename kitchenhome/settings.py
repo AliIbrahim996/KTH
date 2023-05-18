@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0&t^g-8b5)&y&c&v&m6_)ik8ug@dwm^_9y@!#201q9h_2)ok-9"
+SECRET_KEY = ""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -142,10 +142,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "core.User"
 
 # Stripe API key
+STRIPE_PUBLISHED_KEY = ""
+STRIPE_SECRET_KEY = ""
+STRIPE_WEBHOOK_SECRET_KEY = ""
 
-STRIPE_PUBLISHED_KEY = "pk_test_51MIepPBrR1PqGxE7LOhRAf8awzAnintvSm5EpInVMXZxQ0xDnlQQlinuTNhMvererSImZlMJnDtiC6ACLjhf4NGh00etoxlFRz"
-STRIPE_SECRET_KEY = "sk_test_51MIepPBrR1PqGxE7M16iNfBd8H6SAQoqXzDzEkrYeslTknjuCjmFMG7wMyzT59GoybF8dRBiuUVIE2wxhmmukVfL00ZkQfn2Zz"
-STRIPE_WEBHOOK_SECRET_KEY = "we_1MVCXCBrR1PqGxE7EfwYwwj0"
-TWILIO_AUTH_TOKEN = "94941227c30a96b08e95abadf0a8d3ae"
-TWILIO_ACCOUNT_SID = "AC9d0a1681d1116f4b20530dbc7f29bb18"
-TWILIO_MESSAGING_SERVICE_SID = "MG3a30eb91e77bd8741593aa115f298618"
+# TWILIO API key
+TWILIO_AUTH_TOKEN = ""
+TWILIO_ACCOUNT_SID = ""
+TWILIO_MESSAGING_SERVICE_SID = ""

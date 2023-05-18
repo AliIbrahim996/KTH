@@ -1,10 +1,11 @@
 from core.models import Location
 from core.serializer import LocationSerializer
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
-
+from core.serializer.location_serializer import UserLocationSerializer
 
 class LocView(viewsets.GenericViewSet):
     permission_classes = (permissions.IsAuthenticated,)
@@ -52,3 +53,28 @@ class UserLocationView(viewsets.ReadOnlyModelViewSet, LocView):
         if self.request:
             return Location.objects.filter(customer__id=self.request.user.id).defer("customer")
         return Location.objects.none()
+
+
+class NewUserLocationView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        qs = UserLocation.objects.filter(user=request.user)
+        serializer = UserLocationSerializer(qs, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+    def post(self,request, *args, **kwargs):
+        serializer = UserLocationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+    def patch(self,request, *args, **kwargs):
+        location_id = request.query_params.get('id')
+        location_object = UserLocation.objects.get(id=location_id)
+        serializer = UserLocationSerializer(location_object, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

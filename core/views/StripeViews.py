@@ -36,9 +36,9 @@ class StripeViews(APIView):
                     payment_intent_data={"setup_future_usage": "off_session"},
                     payment_method_types=['card'],
                     mode='payment',
-                    metadata={'customer_id': request.user.id, "cart_id": cart_id, "loc_id": loc_id },
+                    metadata={'customer_id': request.user.id, "cart_id": cart_id, "loc_id": request.data["loc_id"] if 'loc_id' in request.data else ''},
                     success_url="https://aliaji72.pythonanywhere.com/core/customer/payment/fulfil",
-                    cancel_url="http://127.0.0.1:8000/core/customer/payment/cancelled", )
+                    cancel_url="https://aliaji72.pythonanywhere.com/core/customer/payment/cancelled", )
 
                 return Response("URL: " + checkout_session.url, status=status.HTTP_200_OK)
             except Exception as e:
@@ -47,6 +47,59 @@ class StripeViews(APIView):
          return Response({"msg: missing cart_id or loc_id check your request body!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+def createOrder(cart_id, loc_id):
+    cart = Cart.objects.get(cart_id)
+    cart_items = CartItem.objects.filter(cart_id=cart_id)
+    chef_id = cart_items[0].meal.chef.id
+    # Create new order
+    order = Order.objects.create(chef_id=chef_id, customer=cart.customer.id)
+    if loc_id:
+        order.location =  Location.objects.get(loc_id)
+        order.save()
+    try:
+        scheduled_items_price = non_scheduled_items_price = Chef.objects.get(pk=chef_id).delivery_cost
+        scheduled_orders = SubOrder.objects.create(state=SubOrder.OrderStates.SCHEDULED, order=order)
+        non_scheduled_orders = SubOrder.objects.create(state=SubOrder.OrderStates.PENDING, order=order)
+        # Combine Scheduled items into one subOrder.
+        for cart_item in cart_items:
+            if cart_item.is_scheduled:
+                scheduled_orders.cart_items.add(cart_item)
+                scheduled_items_price += cart_item.count * cart_item.meal.price
+        # Combine non-Scheduled items into one subOrder.
+            else:
+                non_scheduled_orders.cart_items.add(cart_item)
+                non_scheduled_items_price += cart_item.count * cart_item.meal.price
+
+        scheduled_orders.total_price = scheduled_items_price
+        non_scheduled_orders.total_price = non_scheduled_items_price
+        scheduled_orders.save()
+        non_scheduled_orders.save()
+        # Set cart to closed.
+        cart.CartStates = Cart.CartStates.CLOSED
+        cart.save()
+        print("New order is created!")
+        return Response("New order is created!", status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response("Error! " + str(e), status=status.HTTP_400_BAD_REQUEST)
+
+
+class paidOrderViews(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        if request.data["cart_id"]:
+            cart_id = request.data["cart_id"]
+            return createOrder(cart_id, request.data["loc_id"] if 'loc_id' in request.data else '')
+
+class StripeCancelledViews(APIView):
+    permission_classes = [permissions.AllowAny]
+
+
+    def get(self, request):
+        return Response("Payment is sent cancelled!", status=status.HTTP_200_OK)
+ 
 class StripeFulfilViews(APIView):
     permission_classes = [permissions.AllowAny]
 

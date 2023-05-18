@@ -10,3 +10,6 @@ class CartItem(models.Model):
     is_scheduled = models.BooleanField(default=False)
     order_date = models.DateTimeField(null=True)
     comment = models.TextField(null=True)
+    
+    def __str__(self):
+        return f'{self.id}'

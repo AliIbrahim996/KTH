@@ -24,6 +24,28 @@ class MealsByChefView(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
+class TrendingMealsViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = ListMealSerializer
+
+    def get_queryset(self):
+        orders = Order.objects.all()
+        if orders.count() > 0:
+            try:
+                order_items = orders.prefetch_related("order_items"). \
+                    get().order_items.prefetch_related("order_item_set").get().cart_items.\
+                    annotate(meal_count=Count('meal'))\
+                    .filter(meal_count__gt=1).values("meal")
+                return order_items
+
+            except Exception as e:
+                print(e)
+                return Meal.objects.none()
+
+        else:
+            return Meal.objects.all()[:10]
+
+
 
 class MealsByCategoryView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)

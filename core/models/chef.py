@@ -21,14 +21,17 @@ class Chef(models.Model):
         default=ChefStates.PENDING,
     )
     id_card = models.ImageField(upload_to="images/")
+    cover_image = models.ImageField(upload_to="images/", null=True)
+    location = models.CharField(max_length=255, null=True)
     heart_number = models.IntegerField(default=0)
     delivery_cost = models.IntegerField(default=0)
     description = models.TextField(max_length=255, null=True)
     bio = models.TextField(max_length=150, null=True)
+    is_delivery = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.user.full_name)
+        return f'{self.user}'
 
 
 class Documents(models.Model):

@@ -15,6 +15,7 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = [
+            "id",
             "customer",
             "phone_number",
             "loc_lat",
@@ -33,5 +34,12 @@ class LocationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         location = Location.objects.create(customer=self.customer.instance,
-                                           loc_lan=validated_data["loc_lan"], loc_lat=validated_data["loc_lat"])
+                                           loc_lan=validated_data["loc_lan"],
+                                           loc_lat=validated_data["loc_lat"],
+                                           street=validated_data["street"],
+                                           city=validated_data["city"],
+                                          country=validated_data["country"],
+                                           department_number=validated_data["department_number"],
+                                           location_type=validated_data["location_type"],
+                                           )
         return location
